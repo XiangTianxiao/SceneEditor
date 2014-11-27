@@ -80,6 +80,10 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 
 	glFlush();
 	SwapBuffers(m_pDC->GetSafeHdc());
+
+
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	pFrame->update_obj_tree(pDoc->m_obj_list);
 }
 
 void CSceneEditorView::OnRButtonUp(UINT /* nFlags */, CPoint point)

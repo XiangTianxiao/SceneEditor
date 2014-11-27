@@ -29,8 +29,8 @@ protected:
 	CImageList m_FileViewImages;
 	CFileViewToolBar m_wndToolBar;
 
-protected:
-	void FillFileView();
+public:
+	void FillFileView(list<CDocObj*> obj_list);
 
 // й╣ож
 public:

@@ -20,6 +20,7 @@ CViewTree::~CViewTree()
 }
 
 BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
+	ON_NOTIFY_REFLECT(TVN_SELCHANGED, &CViewTree::OnTvnSelchanged)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,4 +39,16 @@ BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	}
 
 	return bRes;
+}
+
+
+void CViewTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	// TODO:  在此添加控件通知处理程序代码
+	CString obj_name = GetItemText(pNMTreeView->itemNew.hItem);
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	pFrame->draw_property(obj_name);
+
+	*pResult = 0;
 }

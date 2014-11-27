@@ -9,6 +9,8 @@
 using namespace std;
 #include "DocObj.h"
 
+#include "PropertiesWnd.h"
+
 class CSceneEditorDoc : public CDocument
 {
 protected: // 仅从序列化创建
@@ -18,9 +20,9 @@ protected: // 仅从序列化创建
 // 特性
 public:
 	list<CDocObj*> m_obj_list;
-
 // 操作
 public:
+	void draw_property(CString name, CPropertiesWnd* pProperties);
 
 // 重写
 public:

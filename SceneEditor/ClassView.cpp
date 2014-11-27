@@ -123,6 +123,7 @@ void CClassView::OnSize(UINT nType, int cx, int cy)
 
 void CClassView::FillClassView()
 {
+	/*
 	HTREEITEM hRoot = m_wndClassView.InsertItem(_T("FakeApp ¿‡"), 0, 0);
 	m_wndClassView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
 
@@ -157,6 +158,7 @@ void CClassView::FillClassView()
 	hClass = m_wndClassView.InsertItem(_T("Globals"), 2, 2, hRoot);
 	m_wndClassView.InsertItem(_T("theFakeApp"), 5, 5, hClass);
 	m_wndClassView.Expand(hClass, TVE_EXPAND);
+	*/
 }
 
 void CClassView::OnContextMenu(CWnd* pWnd, CPoint point)

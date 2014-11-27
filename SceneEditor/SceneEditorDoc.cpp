@@ -30,8 +30,20 @@ END_MESSAGE_MAP()
 CSceneEditorDoc::CSceneEditorDoc()
 {
 	// TODO:  在此添加一次性构造代码
-	CDocObj* pObj = new CDocObj(CYLINDER);
-	m_obj_list.push_back(pObj);
+	{
+		CDocObj* pObj = new CDocObj(L"圆柱", CYLINDER);
+		m_obj_list.push_back(pObj);
+	}
+	{
+		CDocObj* pObj = new CDocObj(L"棱柱", PRISM);
+		pObj->m_obj->m_x = 3.0;
+		m_obj_list.push_back(pObj);
+	}
+	{
+		//cube 不过还不能使用，因为使用了glut库
+		//CDocObj* pObj = new CDocObj(L"圆柱", CYLINDER);
+		//m_obj_list.push_back(pObj);
+	}
 }
 
 CSceneEditorDoc::~CSceneEditorDoc()
@@ -136,3 +148,16 @@ void CSceneEditorDoc::Dump(CDumpContext& dc) const
 
 
 // CSceneEditorDoc 命令
+
+void CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)
+{
+	for (auto i = m_obj_list.begin(); i != m_obj_list.end(); i++)
+	{
+		if ((*i)->m_name == name)
+		{
+			pProperties->m_pObj = *i;
+			(*i)->draw_property(&pProperties->m_wndPropList);
+			return;
+		}
+	}
+}

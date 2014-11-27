@@ -6,6 +6,8 @@
 #include "FileView.h"
 #include "ClassView.h"
 #include "PropertiesWnd.h"
+#include <list>
+using namespace std;
 
 class CMainFrame : public CFrameWndEx
 {
@@ -19,7 +21,8 @@ public:
 
 // ²Ù×÷
 public:
-
+	void draw_property(CString name);
+	void update_obj_tree(list<CDocObj*> obj_list);
 // ÖØÐ´
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

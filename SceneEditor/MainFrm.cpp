@@ -215,3 +215,14 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 	return lres;
 }
 
+void CMainFrame::update_obj_tree(list<CDocObj*> obj_list)
+{
+	m_wndFileView.FillFileView(obj_list);
+}
+
+void CMainFrame::draw_property(CString name)
+{
+	CSceneEditorDoc* pDoc;
+	pDoc = (CSceneEditorDoc*)GetActiveDocument();
+	pDoc->draw_property(name, &m_wndProperties);
+}

@@ -52,3 +52,9 @@ enum OBJ_TYPE
 	PRISM,
 	SPHERE
 };
+
+#include "DocObj.h"
+
+#include "SceneEditorDoc.h"
+#include "SceneEditorView.h"
+#include "MainFrm.h"

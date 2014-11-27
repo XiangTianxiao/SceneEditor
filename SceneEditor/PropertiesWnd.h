@@ -1,5 +1,6 @@
 
 #pragma once
+#include "DocObj.h"
 
 class CPropertiesToolBar : public CMFCToolBar
 {
@@ -14,6 +15,8 @@ public:
 
 class CPropertiesWnd : public CDockablePane
 {
+public:
+	CDocObj* m_pObj;
 // ππ‘Ï
 public:
 	CPropertiesWnd();
@@ -28,7 +31,7 @@ public:
 		m_wndPropList.SetGroupNameFullWidth(bSet);
 	}
 
-protected:
+public:
 	CFont m_fntPropList;
 	CComboBox m_wndObjectCombo;
 	CPropertiesToolBar m_wndToolBar;
@@ -58,5 +61,7 @@ protected:
 	void SetPropListFont();
 
 	int m_nComboHeight;
+
+	afx_msg LRESULT OnPropertyChanged(WPARAM, LPARAM);
 };
 

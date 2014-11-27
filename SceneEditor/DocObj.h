@@ -10,9 +10,10 @@
 class CDocObj
 {
 public:
-	CDocObj(OBJ_TYPE type);
+	CDocObj(CString name, OBJ_TYPE type);
 	~CDocObj();
 
+	CString m_name;
 	CObj* m_obj;
 	OBJ_TYPE m_type;
 	void draw_property(CMFCPropertyGridCtrl* PropList);

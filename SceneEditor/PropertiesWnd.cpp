@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CPropertiesWnd, CDockablePane)
 	ON_UPDATE_COMMAND_UI(ID_PROPERTIES2, OnUpdateProperties2)
 	ON_WM_SETFOCUS()
 	ON_WM_SETTINGCHANGE()
+	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -90,8 +91,8 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("未能创建属性网格\n");
 		return -1;      // 未能创建
 	}
-
-	InitPropList();
+	SetPropListFont();
+	//InitPropList();
 
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES);
 	m_wndToolBar.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* 已锁定*/);
@@ -181,8 +182,8 @@ void CPropertiesWnd::InitPropList()
 
 	CMFCPropertyGridProperty* pSize = new CMFCPropertyGridProperty(_T("窗口大小"), 0, TRUE);
 
-	pProp = new CMFCPropertyGridProperty(_T("高度"), (_variant_t) 250l, _T("指定窗口的高度"));
-	pProp->EnableSpinControl(TRUE, 50, 300);
+	pProp = new CMFCPropertyGridProperty(_T("高度"), (_variant_t) 250.0, _T("指定窗口的高度"));
+	//pProp->EnableSpinControl(TRUE, 50, 300);
 	pSize->AddSubItem(pProp);
 
 	pProp = new CMFCPropertyGridProperty( _T("宽度"), (_variant_t) 150l, _T("指定窗口的宽度"));
@@ -269,4 +270,16 @@ void CPropertiesWnd::SetPropListFont()
 
 	m_wndPropList.SetFont(&m_fntPropList);
 	m_wndObjectCombo.SetFont(&m_fntPropList);
+}
+
+LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
+{
+	//改变值
+	CMFCPropertyGridProperty* pProp = (CMFCPropertyGridProperty*)lParam;
+	m_pObj->change_value(pProp);
+	//刷新
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	CSceneEditorView *pView = (CSceneEditorView*)(pFrame->GetActiveView());
+	pView->Invalidate(FALSE);
+	return 0;
 }
