@@ -4,6 +4,13 @@
 
 #pragma once
 
+enum VIEW_OP
+{
+	NONE,
+	VIEW_ROTATE,
+	VIEW_MOVE,
+	
+};
 
 class CSceneEditorView : public CView
 {
@@ -13,6 +20,19 @@ public:
 	BOOL InitializeOpenGL();    //Initialize OpenGL
 	BOOL SetupPixelFormat();    //Set up the Pixel Format
 	void RenderScene();            //Render the Scene
+	//视图
+	bool m_lbutton_down;
+	GLfloat m_eye_x;
+	GLfloat m_eye_y;
+	GLfloat m_eye_z;
+
+	GLfloat m_center_x;
+	GLfloat m_center_y;
+	GLfloat m_center_z;
+	VIEW_OP m_view_op;
+
+	int m_temp_x;
+	int m_temp_y;
 
 protected: // 仅从序列化创建
 	CSceneEditorView();
@@ -52,6 +72,15 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnUpdateMenuRotation(CCmdUI *pCmdUI);
+	afx_msg void OnMenuMove();
+	afx_msg void OnUpdateMenuMove(CCmdUI *pCmdUI);
+	afx_msg void OnMenuRotation();
+	afx_msg void OnMenuSelect();
+	afx_msg void OnUpdateMenuSelect(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

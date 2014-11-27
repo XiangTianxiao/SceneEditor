@@ -28,6 +28,15 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_UPDATE_COMMAND_UI(ID_MENU_ROTATION, &CSceneEditorView::OnUpdateMenuRotation)
+	ON_COMMAND(ID_MENU_MOVE, &CSceneEditorView::OnMenuMove)
+	ON_UPDATE_COMMAND_UI(ID_MENU_MOVE, &CSceneEditorView::OnUpdateMenuMove)
+	ON_COMMAND(ID_MENU_ROTATION, &CSceneEditorView::OnMenuRotation)
+	ON_COMMAND(ID_MENU_SELECT, &CSceneEditorView::OnMenuSelect)
+	ON_UPDATE_COMMAND_UI(ID_MENU_SELECT, &CSceneEditorView::OnUpdateMenuSelect)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -35,7 +44,17 @@ END_MESSAGE_MAP()
 CSceneEditorView::CSceneEditorView()
 {
 	// TODO:  在此处添加构造代码
+	m_eye_x = 10;
+	m_eye_y = 10;
+	m_eye_z = 10;
 
+	m_center_x = 0;
+	m_center_y = 0;
+	m_center_z = 0;
+
+	m_view_op = NONE;
+
+	m_lbutton_down = false;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -71,7 +90,7 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
 	glEnable(GL_LIGHT0);
 
-	gluLookAt(10, 10, 10, 0, 0, 0, 0, 0, 1);
+	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -175,6 +194,7 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	glLoadIdentity();
 	GLdouble aspect_ratio; // width/height ratio
 	aspect_ratio = (GLdouble)cx / (GLdouble)cy;
+	
 	gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
 
 	glMatrixMode(GL_MODELVIEW);
@@ -279,3 +299,102 @@ void CSceneEditorView::RenderScene()
 
 	glFlush();
 }
+
+
+void CSceneEditorView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	m_lbutton_down = true;
+	m_temp_x = point.x;
+	m_temp_y = point.y;
+	CView::OnLButtonDown(nFlags, point);
+}
+
+
+void CSceneEditorView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	m_lbutton_down = false;
+	CView::OnLButtonUp(nFlags, point);
+}
+
+
+void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	if (m_lbutton_down == true)
+	{
+		GLfloat x = m_eye_x - m_center_x;
+		GLfloat y = m_eye_y - m_center_y;
+		GLfloat r = sqrt(x*x + y*y);
+		GLfloat t_r;
+		GLfloat theta = atan(x / y);
+		int dx = point.x - m_temp_x;
+		int dy = point.y - m_temp_y;
+		GLfloat delta_theta = dx*0.1 / r;
+		switch (m_view_op)
+		{
+		case NONE:
+			break;
+		case VIEW_ROTATE:
+			x += dx*0.1*y / r;
+			y -= dx*0.1*x / r;
+			t_r = sqrt(x*x + y*y);
+			x = x / t_r*r;
+			y = y / t_r*r;
+			m_eye_x = x + m_center_x;
+			m_eye_y = y + m_center_y;
+			break;
+		case VIEW_MOVE:
+			break;
+		default:
+			break;
+		}
+		m_temp_x = point.x;
+		m_temp_y = point.y;
+		Invalidate(FALSE);
+	}
+	CView::OnMouseMove(nFlags, point);
+}
+
+
+void CSceneEditorView::OnUpdateMenuRotation(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_view_op == VIEW_ROTATE);
+}
+
+
+void CSceneEditorView::OnUpdateMenuMove(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_view_op == VIEW_MOVE);
+}
+
+
+void CSceneEditorView::OnUpdateMenuSelect(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+}
+
+
+void CSceneEditorView::OnMenuRotation()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_view_op = VIEW_ROTATE;
+}
+
+
+void CSceneEditorView::OnMenuMove()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_view_op = VIEW_MOVE;
+}
+
+
+void CSceneEditorView::OnMenuSelect()
+{
+	// TODO:  在此添加命令处理程序代码
+}
+
+
