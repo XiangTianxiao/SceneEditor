@@ -12,6 +12,12 @@ enum VIEW_OP
 	
 };
 
+enum POLYGON_MODE
+{
+	LINE,
+	FILL
+};
+
 class CSceneEditorView : public CView
 {
 public:
@@ -33,6 +39,12 @@ public:
 
 	int m_temp_x;
 	int m_temp_y;
+
+	int sign(GLfloat x);
+
+
+	//PolygonMode
+	POLYGON_MODE m_PolygonMode;
 
 protected: // 仅从序列化创建
 	CSceneEditorView();
@@ -81,6 +93,11 @@ public:
 	afx_msg void OnMenuRotation();
 	afx_msg void OnMenuSelect();
 	afx_msg void OnUpdateMenuSelect(CCmdUI *pCmdUI);
+	afx_msg void OnPolygonmodeLine();
+	afx_msg void OnPolygonmodeFill();
+	afx_msg void OnUpdatePolygonmodeLine(CCmdUI *pCmdUI);
+	afx_msg void OnUpdatePolygonmodeFill(CCmdUI *pCmdUI);
+	afx_msg void OnCmdAdd();
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

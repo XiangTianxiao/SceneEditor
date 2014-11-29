@@ -31,7 +31,7 @@ CSceneEditorDoc::CSceneEditorDoc()
 {
 	// TODO:  在此添加一次性构造代码
 	{
-		CDocObj* pObj = new CDocObj(L"圆柱", CYLINDER);
+		CDocObj* pObj = new CDocObj(L"圆柱", CUBE);
 		m_obj_list.push_back(pObj);
 	}
 	{

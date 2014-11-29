@@ -20,7 +20,9 @@ void CPrism::draw()
 
 	glPushMatrix();
 	Transform();
+	glNormal3f(0, 0, -1);
 	DrawBottom(0, m_baseRadius);
+	glNormal3f(0, 0, 1);
 	DrawBottom(m_height, m_topRadius);
 	DrawSide();
 	glPopMatrix();
@@ -55,6 +57,7 @@ void CPrism::DrawSide()
 	vertex[3] = 1.0;
 	for (int i = 0; i <= m_edge; i++)
 	{
+
 		vertex[2] = 0.0;
 		vertex[0] = std::sin(delta_angle*i)*m_baseRadius;
 		vertex[1] = std::cos(delta_angle*i)*m_baseRadius;

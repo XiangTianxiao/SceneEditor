@@ -37,6 +37,11 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_COMMAND(ID_MENU_ROTATION, &CSceneEditorView::OnMenuRotation)
 	ON_COMMAND(ID_MENU_SELECT, &CSceneEditorView::OnMenuSelect)
 	ON_UPDATE_COMMAND_UI(ID_MENU_SELECT, &CSceneEditorView::OnUpdateMenuSelect)
+	ON_COMMAND(ID_POLYGONMODE_LINE, &CSceneEditorView::OnPolygonmodeLine)
+	ON_COMMAND(ID_POLYGONMODE_FILL, &CSceneEditorView::OnPolygonmodeFill)
+	ON_UPDATE_COMMAND_UI(ID_POLYGONMODE_LINE, &CSceneEditorView::OnUpdatePolygonmodeLine)
+	ON_UPDATE_COMMAND_UI(ID_POLYGONMODE_FILL, &CSceneEditorView::OnUpdatePolygonmodeFill)
+	ON_COMMAND(ID_CMD_ADD, &CSceneEditorView::OnCmdAdd)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -55,6 +60,8 @@ CSceneEditorView::CSceneEditorView()
 	m_view_op = NONE;
 
 	m_lbutton_down = false;
+
+	m_PolygonMode = FILL;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -86,13 +93,17 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 	GLfloat light_pos[] = { 4, 4, 4, 0 };
 	GLfloat light_color[] = { 1.0, 1.0, 1.0, 1.0 };
 
+	glEnable(GL_LIGHTING);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
 	glEnable(GL_LIGHT0);
 
 	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (m_PolygonMode==LINE)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else if (m_PolygonMode==FILL)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 	RenderScene();//绘图都放在这
@@ -318,7 +329,13 @@ void CSceneEditorView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
-
+int CSceneEditorView::sign(GLfloat x)
+{
+	if (x < 0.0)
+		return -1;
+	else
+		return 1;
+}
 void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
@@ -326,8 +343,11 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		GLfloat x = m_eye_x - m_center_x;
 		GLfloat y = m_eye_y - m_center_y;
+		GLfloat z = m_eye_z - m_center_z;
 		GLfloat r = sqrt(x*x + y*y);
+		GLfloat R = sqrt(x*x + y*y + z*z);
 		GLfloat t_r;
+		GLfloat t_R;
 		GLfloat theta = atan(x / y);
 		int dx = point.x - m_temp_x;
 		int dy = point.y - m_temp_y;
@@ -337,13 +357,24 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 		case NONE:
 			break;
 		case VIEW_ROTATE:
-			x += dx*0.1*y / r;
-			y -= dx*0.1*x / r;
+			x += dx*0.05*y / r;
+			y -= dx*0.05*x / r;
 			t_r = sqrt(x*x + y*y);
 			x = x / t_r*r;
 			y = y / t_r*r;
+			if (!((dy > 0 && z > 17.2) || (dy < 0 && z < -17.2)))
+			{
+				z += dy*0.05*r;
+				x = x - z*dy*0.05*x / r;
+				y = y - z*dy*0.05*y / r;
+				t_R = sqrt(x*x + y*y + z*z);
+				x = x / t_R*R;
+				y = y / t_R*R;
+				z = z / t_R*R;
+			}
 			m_eye_x = x + m_center_x;
 			m_eye_y = y + m_center_y;
+			m_eye_z = z + m_center_z;
 			break;
 		case VIEW_MOVE:
 			break;
@@ -398,3 +429,41 @@ void CSceneEditorView::OnMenuSelect()
 }
 
 
+
+
+void CSceneEditorView::OnPolygonmodeLine()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_PolygonMode = LINE;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnPolygonmodeFill()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_PolygonMode = FILL;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnUpdatePolygonmodeLine(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_PolygonMode == LINE);
+}
+
+
+void CSceneEditorView::OnUpdatePolygonmodeFill(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_PolygonMode == FILL);
+}
+
+
+
+void CSceneEditorView::OnCmdAdd()
+{
+	// TODO:  在此添加命令处理程序代码
+
+}

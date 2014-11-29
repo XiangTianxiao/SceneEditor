@@ -193,11 +193,22 @@ BEGIN
         MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
         MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
     END
+    POPUP "命令"
+    BEGIN
+        MENUITEM "add",                         ID_CMD_ADD
+        MENUITEM "delete",                      ID_CMD_DELETE
+        MENUITEM "rename",                      ID_CMD_RENAME
+    END
     POPUP "视图"
     BEGIN
         MENUITEM "旋转",                          ID_MENU_ROTATION
         MENUITEM "平移",                          ID_MENU_MOVE
         MENUITEM "选择",                          ID_MENU_SELECT
+    END
+    POPUP "PolygonMode"
+    BEGIN
+        MENUITEM "LINE",                        ID_POLYGONMODE_LINE
+        MENUITEM "FILL",                        ID_POLYGONMODE_FILL
     END
     POPUP "帮助(&H)"
     BEGIN
@@ -288,6 +299,19 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
 
+IDD_DIALOG_ADD DIALOGEX 0, 0, 309, 177
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,198,156,50,14
+    PUSHBUTTON      "取消",IDCANCEL,252,156,50,14
+    CONTROL         "cube",IDC_RADIO_ADD_CUBE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,128,67,31,10
+    CONTROL         "cylinder",IDC_RADIO_ADD_CYLINDER,"Button",BS_AUTORADIOBUTTON,128,82,41,10
+    CONTROL         "prism",IDC_RADIO_ADD_PRISM,"Button",BS_AUTORADIOBUTTON,128,97,33,10
+    CONTROL         "sphere",IDC_RADIO_ADD_SPHERE,"Button",BS_AUTORADIOBUTTON,128,111,38,10
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -342,6 +366,15 @@ BEGIN
         RIGHTMARGIN, 163
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
+    END
+
+    IDD_DIALOG_ADD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        VERTGUIDE, 128
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
     END
 END
 #endif    // APSTUDIO_INVOKED
