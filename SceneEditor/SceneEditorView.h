@@ -4,12 +4,14 @@
 
 #pragma once
 
+
+
 enum VIEW_OP
 {
 	NONE,
 	VIEW_ROTATE,
 	VIEW_MOVE,
-	
+	VIEW_SELECT
 };
 
 enum POLYGON_MODE
@@ -17,7 +19,15 @@ enum POLYGON_MODE
 	LINE,
 	FILL
 };
-
+/*
+enum ADD_OBJ_TYPE
+{
+	ADD_CUBE,
+	ADD_CYLINDER,
+	ADD_PRISM,
+	ADD_SPHERE
+};
+*/
 class CSceneEditorView : public CView
 {
 public:
@@ -45,6 +55,13 @@ public:
 
 	//PolygonMode
 	POLYGON_MODE m_PolygonMode;
+	//dlg add obj
+	OBJ_TYPE m_obj_type;
+	CDocObj* add_obj(OBJ_TYPE type, CString name);
+	CDocObj* add_obj(CString name, CString file_name);
+	CDocObj* m_cur_obj;
+
+	bool m_need_update_obj_tree;
 
 protected: // 仅从序列化创建
 	CSceneEditorView();

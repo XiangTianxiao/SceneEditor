@@ -18,7 +18,7 @@ protected: // 仅从序列化创建
 
 // 特性
 public:
-
+	CString m_obj_name;
 // 操作
 public:
 	void draw_property(CString name);

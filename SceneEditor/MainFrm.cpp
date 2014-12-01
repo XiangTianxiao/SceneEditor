@@ -224,5 +224,9 @@ void CMainFrame::draw_property(CString name)
 {
 	CSceneEditorDoc* pDoc;
 	pDoc = (CSceneEditorDoc*)GetActiveDocument();
-	pDoc->draw_property(name, &m_wndProperties);
+	CDocObj* pObj = pDoc->draw_property(name, &m_wndProperties);
+
+	CSceneEditorView* pView = (CSceneEditorView*)GetActiveView();
+	pView->m_cur_obj = pObj;
 }
+

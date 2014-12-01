@@ -281,5 +281,8 @@ LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
 	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
 	CSceneEditorView *pView = (CSceneEditorView*)(pFrame->GetActiveView());
 	pView->Invalidate(FALSE);
+	
+	pFrame->draw_property(pFrame->m_obj_name);
+
 	return 0;
 }

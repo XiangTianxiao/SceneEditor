@@ -49,6 +49,6 @@ void CViewTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 	CString obj_name = GetItemText(pNMTreeView->itemNew.hItem);
 	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
 	pFrame->draw_property(obj_name);
-
+	pFrame->m_obj_name = obj_name;
 	*pResult = 0;
 }

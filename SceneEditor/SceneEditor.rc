@@ -193,17 +193,17 @@ BEGIN
         MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
         MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
     END
+    POPUP "视图"
+    BEGIN
+        MENUITEM "选择",                          ID_MENU_SELECT
+        MENUITEM "旋转",                          ID_MENU_ROTATION
+        MENUITEM "平移",                          ID_MENU_MOVE
+    END
     POPUP "命令"
     BEGIN
         MENUITEM "add",                         ID_CMD_ADD
         MENUITEM "delete",                      ID_CMD_DELETE
         MENUITEM "rename",                      ID_CMD_RENAME
-    END
-    POPUP "视图"
-    BEGIN
-        MENUITEM "旋转",                          ID_MENU_ROTATION
-        MENUITEM "平移",                          ID_MENU_MOVE
-        MENUITEM "选择",                          ID_MENU_SELECT
     END
     POPUP "PolygonMode"
     BEGIN
@@ -306,10 +306,12 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,198,156,50,14
     PUSHBUTTON      "取消",IDCANCEL,252,156,50,14
-    CONTROL         "cube",IDC_RADIO_ADD_CUBE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,128,67,31,10
-    CONTROL         "cylinder",IDC_RADIO_ADD_CYLINDER,"Button",BS_AUTORADIOBUTTON,128,82,41,10
-    CONTROL         "prism",IDC_RADIO_ADD_PRISM,"Button",BS_AUTORADIOBUTTON,128,97,33,10
-    CONTROL         "sphere",IDC_RADIO_ADD_SPHERE,"Button",BS_AUTORADIOBUTTON,128,111,38,10
+    CONTROL         "cube",IDC_RADIO_ADD_CUBE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,166,67,31,10
+    CONTROL         "cylinder",IDC_RADIO_ADD_CYLINDER,"Button",BS_AUTORADIOBUTTON,166,82,41,10
+    CONTROL         "prism",IDC_RADIO_ADD_PRISM,"Button",BS_AUTORADIOBUTTON,166,97,33,10
+    CONTROL         "sphere",IDC_RADIO_ADD_SPHERE,"Button",BS_AUTORADIOBUTTON,166,111,38,10
+    EDITTEXT        IDC_EDIT_ADD_OBJ_NAME,99,92,40,14,ES_AUTOHSCROLL
+    CONTROL         "obj file",IDC_RADIO_ADD_OBJFILE,"Button",BS_AUTORADIOBUTTON,166,125,37,10
 END
 
 
@@ -372,7 +374,7 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 302
-        VERTGUIDE, 128
+        VERTGUIDE, 166
         TOPMARGIN, 7
         BOTTOMMARGIN, 170
     END

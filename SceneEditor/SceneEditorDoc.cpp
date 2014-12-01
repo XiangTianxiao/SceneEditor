@@ -34,11 +34,13 @@ CSceneEditorDoc::CSceneEditorDoc()
 		CDocObj* pObj = new CDocObj(L"圆柱", CUBE);
 		m_obj_list.push_back(pObj);
 	}
+	
 	{
 		CDocObj* pObj = new CDocObj(L"棱柱", PRISM);
 		pObj->m_obj->m_x = 3.0;
 		m_obj_list.push_back(pObj);
 	}
+	
 	{
 		//cube 不过还不能使用，因为使用了glut库
 		//CDocObj* pObj = new CDocObj(L"圆柱", CYLINDER);
@@ -149,7 +151,7 @@ void CSceneEditorDoc::Dump(CDumpContext& dc) const
 
 // CSceneEditorDoc 命令
 
-void CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)
+CDocObj* CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)
 {
 	for (auto i = m_obj_list.begin(); i != m_obj_list.end(); i++)
 	{
@@ -157,7 +159,45 @@ void CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)
 		{
 			pProperties->m_pObj = *i;
 			(*i)->draw_property(&pProperties->m_wndPropList);
-			return;
+			return *i;
 		}
 	}
+	throw CString("CDocObj* CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)");
+}
+
+CDocObj* CSceneEditorDoc::add_obj(OBJ_TYPE type, CString name)
+{
+	CDocObj* pObj = new CDocObj(case_name_overlap(name, 0), type);
+	if (pObj == NULL)
+		throw CString("CDocObj* CSceneEditorDoc::add_obj(OBJ_TYPE type, CString name)");
+
+	m_obj_list.push_back(pObj);
+	return pObj;
+}
+
+CDocObj* CSceneEditorDoc::add_obj(CString name, CString file_name)
+{
+	CDocObj* pObj = new CDocObj(case_name_overlap(name, 0), file_name);
+	if (pObj == NULL)
+		throw CString("CDocObj* CSceneEditorDoc::add_obj(CString name, CString file_name)");
+
+	m_obj_list.push_back(pObj);
+	return pObj;
+}
+
+CString CSceneEditorDoc::case_name_overlap(CString name, int num)
+{
+	CString return_name;
+	CString t_name;
+	if (num == 0)
+		t_name = name;
+	else
+		t_name.Format(_T("%s_%d"), name, num);
+
+	for (auto i = m_obj_list.begin(); i != m_obj_list.end(); i++)
+	{
+		if ((*i)->m_name == t_name)
+			return return_name = case_name_overlap(name, num + 1);
+	}
+	return t_name;
 }

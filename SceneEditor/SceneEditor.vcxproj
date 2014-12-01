@@ -104,6 +104,7 @@
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="DlgAddObj.h" />
     <ClInclude Include="DocObj.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="MainFrm.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="DlgAddObj.cpp" />
     <ClCompile Include="DocObj.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />

@@ -22,7 +22,10 @@ public:
 	list<CDocObj*> m_obj_list;
 // ²Ù×÷
 public:
-	void draw_property(CString name, CPropertiesWnd* pProperties);
+	CDocObj* draw_property(CString name, CPropertiesWnd* pProperties);
+	CDocObj* add_obj(OBJ_TYPE type, CString name);
+	CDocObj* add_obj(CString name, CString file_name);
+	CString case_name_overlap(CString name, int num);
 
 // ÖØÐ´
 public:

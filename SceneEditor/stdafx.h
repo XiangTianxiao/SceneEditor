@@ -16,6 +16,9 @@
 // 关闭 MFC 对某些常见但经常可放心忽略的警告消息的隐藏
 #define _AFX_ALL_WARNINGS
 
+#define _CRT_SECURE_NO_WARNINGS
+
+
 #include <afxwin.h>         // MFC 核心组件和标准组件
 #include <afxext.h>         // MFC 扩展
 
@@ -45,13 +48,17 @@
 #include <gl\GL.h>
 #include <gl\GLU.h>
 
+#define BITMAP_ID 0x4D42
+
 enum OBJ_TYPE
 {
 	CUBE,
 	CYLINDER,
 	PRISM,
-	SPHERE
+	SPHERE,
+	OBJ_FILE
 };
+
 
 #include "DocObj.h"
 

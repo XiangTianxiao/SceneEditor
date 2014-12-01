@@ -72,6 +72,9 @@
     <ClInclude Include="DocObj.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgAddObj.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneEditor.cpp">
@@ -117,6 +120,9 @@
       <Filter>Cobj</Filter>
     </ClCompile>
     <ClCompile Include="DocObj.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgAddObj.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

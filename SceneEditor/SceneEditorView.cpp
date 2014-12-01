@@ -9,8 +9,11 @@
 #include "SceneEditor.h"
 #endif
 
+
 #include "SceneEditorDoc.h"
 #include "SceneEditorView.h"
+#include "DlgAddObj.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,6 +65,11 @@ CSceneEditorView::CSceneEditorView()
 	m_lbutton_down = false;
 
 	m_PolygonMode = FILL;
+
+	m_view_op = VIEW_SELECT;
+	m_obj_type = CUBE;
+
+	m_need_update_obj_tree = true;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -87,33 +95,35 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 
 	// TODO:  在此处为本机数据添加绘制代码
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glLoadIdentity();
-
-	GLfloat light_pos[] = { 4, 4, 4, 0 };
-	GLfloat light_color[] = { 1.0, 1.0, 1.0, 1.0 };
-
-	glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
-	glEnable(GL_LIGHT0);
-
-	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
-
-	if (m_PolygonMode==LINE)
+	if (m_PolygonMode == LINE)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else if (m_PolygonMode==FILL)
+	else if (m_PolygonMode == FILL)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
+	glLoadIdentity();
+	
+	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
+
+
+	glEnable(GL_LIGHTING);
+	GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_pos[] = { 5, 5, 5, 1 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, white);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
+	glEnable(GL_LIGHT0);
+
 	RenderScene();//绘图都放在这
 
-	glFlush();
 	SwapBuffers(m_pDC->GetSafeHdc());
 
-
-	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
-	pFrame->update_obj_tree(pDoc->m_obj_list);
+	if (m_need_update_obj_tree == true)
+	{
+		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+		pFrame->update_obj_tree(pDoc->m_obj_list);
+		m_need_update_obj_tree = false;
+	}
 }
 
 void CSceneEditorView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -249,11 +259,12 @@ BOOL CSceneEditorView::InitializeOpenGL()
 		return FALSE;
 	}
 	//Specify Black as the clear color
-	::glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	//Specify the back of the buffer as clear depth
-	::glClearDepth(1.0f);
+	glClearDepth(1.0f);
 	//Enable Depth Testing
-	::glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
 	return TRUE;
 
 }
@@ -406,6 +417,7 @@ void CSceneEditorView::OnUpdateMenuMove(CCmdUI *pCmdUI)
 void CSceneEditorView::OnUpdateMenuSelect(CCmdUI *pCmdUI)
 {
 	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_view_op == VIEW_SELECT);
 }
 
 
@@ -426,6 +438,7 @@ void CSceneEditorView::OnMenuMove()
 void CSceneEditorView::OnMenuSelect()
 {
 	// TODO:  在此添加命令处理程序代码
+	m_view_op = VIEW_SELECT;
 }
 
 
@@ -465,5 +478,40 @@ void CSceneEditorView::OnUpdatePolygonmodeFill(CCmdUI *pCmdUI)
 void CSceneEditorView::OnCmdAdd()
 {
 	// TODO:  在此添加命令处理程序代码
+	CDlgAddObj dlg;
+	dlg.m_obj_type = m_obj_type;
+	if (dlg.DoModal() == IDOK)
+	{
+		m_obj_type = dlg.m_obj_type;
+		m_view_op = VIEW_SELECT;
+		if (m_obj_type == OBJ_FILE)
+			add_obj(dlg.m_add_obj_name, dlg.m_objfile_name);
+		else
+			add_obj(dlg.m_obj_type, dlg.m_add_obj_name);
 
+	}
+	m_need_update_obj_tree = true;
 }
+
+CDocObj* CSceneEditorView::add_obj(OBJ_TYPE type, CString name)
+{
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return NULL;
+	CDocObj* pObj = pDoc->add_obj(type, name);
+	Invalidate(FALSE);
+	return pObj;
+}
+
+CDocObj* CSceneEditorView::add_obj(CString name, CString file_name)
+{
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return NULL;
+	CDocObj* pObj = pDoc->add_obj(name, file_name);
+	Invalidate(FALSE);
+	return pObj;
+}
+
