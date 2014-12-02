@@ -39,6 +39,7 @@ public:
 	void RenderLight();
 	//视图
 	bool m_lbutton_down;
+	/*透视投影
 	GLfloat m_eye_x;
 	GLfloat m_eye_y;
 	GLfloat m_eye_z;
@@ -46,10 +47,13 @@ public:
 	GLfloat m_center_x;
 	GLfloat m_center_y;
 	GLfloat m_center_z;
+	*/
 	VIEW_OP m_view_op;
 
 	int m_temp_x;
 	int m_temp_y;
+	int m_rotate_x;
+	int m_rotate_y;
 
 	int sign(GLfloat x);
 
@@ -65,6 +69,8 @@ public:
 
 	bool m_need_update_obj_tree;
 	bool m_need_update_light_tree;
+	//窗口截图
+	void SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath);
 
 protected: // 仅从序列化创建
 	CSceneEditorView();
@@ -119,6 +125,7 @@ public:
 	afx_msg void OnUpdatePolygonmodeFill(CCmdUI *pCmdUI);
 	afx_msg void OnCmdAdd();
 	afx_msg void OnCmdAddLight();
+	afx_msg void OnCmdCapture();
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

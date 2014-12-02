@@ -140,6 +140,34 @@ void CDocObj::draw_property_obj(CMFCPropertyGridCtrl* PropList)
 	pAngle->AllowEdit(FALSE);
 	pGroup1->AddSubItem(pAngle);
 
+
+	////////////////////////////////////
+
+	int am_rgb[] = { m_obj->m_ambient[0] * 255.0, m_obj->m_ambient[1] * 255.0, m_obj->m_ambient[2] * 255.0 };
+	CMFCPropertyGridColorProperty* pColorProp = new CMFCPropertyGridColorProperty(_T("环境反射光"), RGB(am_rgb[0], am_rgb[1], am_rgb[2]), NULL, _T("材质的环境反射光"));
+	pColorProp->EnableOtherButton(_T("其他..."));
+	pColorProp->EnableAutomaticButton(_T("默认"), ::GetSysColor(COLOR_3DFACE));
+	pGroup1->AddSubItem(pColorProp);
+
+	int di_rgb[] = { m_obj->m_diffuse[0] * 255.0, m_obj->m_diffuse[1] * 255.0, m_obj->m_diffuse[2] * 255.0 };
+	pColorProp = new CMFCPropertyGridColorProperty(_T("漫反射光"), RGB(di_rgb[0], di_rgb[1], di_rgb[2]), NULL, _T("材质的漫反射光"));
+	pColorProp->EnableOtherButton(_T("其他..."));
+	pColorProp->EnableAutomaticButton(_T("默认"), ::GetSysColor(COLOR_3DFACE));
+	pGroup1->AddSubItem(pColorProp);
+
+	int sp_rgb[] = { m_obj->m_specular[0] * 255.0, m_obj->m_specular[1] * 255.0, m_obj->m_specular[2] * 255.0 };
+	pColorProp = new CMFCPropertyGridColorProperty(_T("镜面反射光"), RGB(sp_rgb[0], sp_rgb[1], sp_rgb[2]), NULL, _T("材质的镜面反射光"));
+	pColorProp->EnableOtherButton(_T("其他..."));
+	pColorProp->EnableAutomaticButton(_T("默认"), ::GetSysColor(COLOR_3DFACE));
+	pGroup1->AddSubItem(pColorProp);
+
+	CMFCPropertyGridProperty* pLightness = new CMFCPropertyGridProperty(_T("亮度"), m_obj->m_shininess, _T("指物体的亮度"));
+
+	pGroup1->AddSubItem(pLightness);
+
+	/////////////////////////////////////
+	
+
 	PropList->AddProperty(pGroup1);
 
 	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("纹理"));
@@ -151,6 +179,8 @@ void CDocObj::draw_property_obj(CMFCPropertyGridCtrl* PropList)
 		pGroup2->AddSubItem(new CMFCPropertyGridFileProperty(_T("选择纹理文件"), TRUE, m_texture_file_name, _T("bmp"), NULL, _T("bmp Files(*.bmp)|*.bmp|"), _T("选择bmp文件")));//选择文件按钮  
 	}
 
+
+
 	PropList->AddProperty(pGroup2);
 
 }
@@ -160,15 +190,79 @@ void CDocObj::draw_property_cube(CMFCPropertyGridCtrl* PropList)
 }
 void CDocObj::draw_property_cylinder(CMFCPropertyGridCtrl* PropList)
 {
+	PropList->EnableHeaderCtrl(FALSE);
+	PropList->EnableDescriptionArea();
+	PropList->SetVSDotNetLook();
 
+	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("圆柱体"));
+
+	CMFCPropertyGridProperty* pBaseRadius = new CMFCPropertyGridProperty(_T("圆柱下底半径"), ((CCylinder*)m_obj)->m_baseRadius, _T("指圆柱的下底半径"));
+
+	pGroup1->AddSubItem(pBaseRadius);
+
+	CMFCPropertyGridProperty* pTopRadius = new CMFCPropertyGridProperty(_T("圆柱上底半径"), ((CCylinder*)m_obj)->m_topRadius, _T("指圆柱的上底半径"));
+
+	pGroup1->AddSubItem(pTopRadius);
+
+	CMFCPropertyGridProperty* pHeight = new CMFCPropertyGridProperty(_T("圆柱高度"), ((CCylinder*)m_obj)->m_height, _T("指圆柱的高度"));
+
+	pGroup1->AddSubItem(pHeight);
+
+	CMFCPropertyGridProperty* pSlices = new CMFCPropertyGridProperty(_T("圆柱经度"), (float)((CCylinder*)m_obj)->m_slices, _T("越高越平滑"));
+
+	pGroup1->AddSubItem(pSlices);
+
+	CMFCPropertyGridProperty* pStacks = new CMFCPropertyGridProperty(_T("圆柱纬度"), (float)((CCylinder*)m_obj)->m_stacks, _T("越高越平滑"));
+
+	pGroup1->AddSubItem(pStacks);
+
+	PropList->AddProperty(pGroup1);
 }
 void CDocObj::draw_property_prism(CMFCPropertyGridCtrl* PropList)
 {
+	PropList->EnableHeaderCtrl(FALSE);
+	PropList->EnableDescriptionArea();
+	PropList->SetVSDotNetLook();
 
+	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("棱体"));
+
+	CMFCPropertyGridProperty* pEdge = new CMFCPropertyGridProperty(_T("棱体边数"), (float)((CPrism*)m_obj)->m_edge, _T("指棱体的边数"));
+
+	pGroup1->AddSubItem(pEdge);
+
+	CMFCPropertyGridProperty* pBaseRadius = new CMFCPropertyGridProperty(_T("棱体下底半径"), ((CPrism*)m_obj)->m_baseRadius, _T("指棱体的下底半径"));
+
+	pGroup1->AddSubItem(pBaseRadius);
+
+	CMFCPropertyGridProperty* pTopRadius = new CMFCPropertyGridProperty(_T("棱体上底半径"), ((CPrism*)m_obj)->m_topRadius, _T("指棱体的上底半径"));
+
+	pGroup1->AddSubItem(pTopRadius);
+
+	CMFCPropertyGridProperty* pHeight = new CMFCPropertyGridProperty(_T("棱体高度"), ((CPrism*)m_obj)->m_height, _T("指棱体的高度"));
+
+	pGroup1->AddSubItem(pHeight);
+
+	PropList->AddProperty(pGroup1);
 }
 void CDocObj::draw_property_sphere(CMFCPropertyGridCtrl* PropList)
 {
+	PropList->EnableHeaderCtrl(FALSE);
+	PropList->EnableDescriptionArea();
+	PropList->SetVSDotNetLook();
 
+	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("球体"));
+
+
+
+	CMFCPropertyGridProperty* pSlices = new CMFCPropertyGridProperty(_T("球体经度"), (float)((CSphere*)m_obj)->m_slices, _T("越高越平滑"));
+
+	pGroup1->AddSubItem(pSlices);
+
+	CMFCPropertyGridProperty* pStacks = new CMFCPropertyGridProperty(_T("球体纬度"), (float)((CSphere*)m_obj)->m_stacks, _T("越高越平滑"));
+
+	pGroup1->AddSubItem(pStacks);
+
+	PropList->AddProperty(pGroup1);
 }
 void CDocObj::draw_property_objfile(CMFCPropertyGridCtrl* PropList)
 {
@@ -179,6 +273,101 @@ void CDocObj::change_value(CMFCPropertyGridProperty* pProp)
 	CString name = pProp->GetName();  //被改变的参数名
 	COleVariant t = pProp->GetValue(); //改变之后的值
 	//m_obj->m_x += 1;
+	///////////////////////////////////////////////////////////
+
+	if (name == "环境反射光")
+	{
+		COLORREF c = t.lVal;
+		m_obj->m_ambient[0] = (c & 0xff) / 255.0;
+		m_obj->m_ambient[1] = (c >> 8 & 0xff) / 255.0;
+		m_obj->m_ambient[2] = (c >> 16 & 0xff) / 255.0;
+		return;
+	}
+
+	if (name == "漫反射光")
+	{
+		COLORREF c = t.lVal;
+		m_obj->m_diffuse[0] = (c & 0xff) / 255.0;
+		m_obj->m_diffuse[1] = (c >> 8 & 0xff) / 255.0;
+		m_obj->m_diffuse[2] = (c >> 16 & 0xff) / 255.0;
+		return;
+	}
+
+	if (name == "镜面反射光")
+	{
+		COLORREF c = t.lVal;
+		m_obj->m_specular[0] = (c & 0xff) / 255.0;
+		m_obj->m_specular[1] = (c >> 8 & 0xff) / 255.0;
+		m_obj->m_specular[2] = (c >> 16 & 0xff) / 255.0;
+		return;
+	}
+
+	if (name == "物体亮度")
+	{
+		m_obj->m_shininess = GLfloat(t.fltVal);
+		return;
+	}
+
+	if (name == "圆柱下底半径")
+	{
+		((CCylinder*)m_obj)->m_baseRadius = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "圆柱上底半径")
+	{
+		((CCylinder*)m_obj)->m_topRadius = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "圆柱高度")
+	{
+		((CCylinder*)m_obj)->m_height = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "圆柱经度")
+	{
+		((CCylinder*)m_obj)->m_slices = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "圆柱纬度")
+	{
+		((CCylinder*)m_obj)->m_stacks = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "棱体下底半径")
+	{
+		((CPrism*)m_obj)->m_baseRadius = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "棱体上底半径")
+	{
+		((CPrism*)m_obj)->m_topRadius = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "棱体高度")
+	{
+		((CPrism*)m_obj)->m_height = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "棱体边数")
+	{
+		((CPrism*)m_obj)->m_edge = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "球体经度")
+	{
+		((CSphere*)m_obj)->m_slices = GLfloat(t.fltVal);
+		return;
+	}
+	if (name == "球体纬度")
+	{
+		((CSphere*)m_obj)->m_stacks = GLfloat(t.fltVal);
+		return;
+	}
+	///////////////////////////////////////////////////////////
+
+
+
+
 	if (name == "X")
 	{
 		m_obj->m_x = GLfloat(t.fltVal);

@@ -86,7 +86,7 @@ void CLight::change_value(CMFCPropertyGridProperty* pProp)
 		m_color[0] = (c & 0xff) / 255.0;
 		m_color[1] = (c >> 8 & 0xff) / 255.0;
 		m_color[2] = (c >> 16 & 0xff) / 255.0;
+		return;
 	}
-	
 }
 

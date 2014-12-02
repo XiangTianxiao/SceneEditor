@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_POLYGONMODE_FILL, &CSceneEditorView::OnUpdatePolygonmodeFill)
 	ON_COMMAND(ID_CMD_ADD, &CSceneEditorView::OnCmdAdd)
 	ON_COMMAND(ID_CMD_ADD_LIGHT, &CSceneEditorView::OnCmdAddLight)
+	ON_COMMAND(ID_CMD_CAPTURE, &CSceneEditorView::OnCmdCapture)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -53,6 +54,10 @@ END_MESSAGE_MAP()
 CSceneEditorView::CSceneEditorView()
 {
 	// TODO:  在此处添加构造代码
+	m_rotate_x = 0;
+	m_rotate_y = 0;
+
+	/*透视投影
 	m_eye_x = 10;
 	m_eye_y = 10;
 	m_eye_z = 10;
@@ -60,7 +65,7 @@ CSceneEditorView::CSceneEditorView()
 	m_center_x = 0;
 	m_center_y = 0;
 	m_center_z = 0;
-
+	*/
 	m_view_op = NONE;
 
 	m_lbutton_down = false;
@@ -104,10 +109,18 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 
 
 	glLoadIdentity();
-	
-	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
+	//////////////////////////////////	
+	//glOrtho(-3, 3, -3, 3, -100, 100);
+	glTranslatef(0, 0, -10);
+	//glRotatef(-90.0, 1.0f, 0.0f, 0.0f);
+	glRotatef(m_rotate_x, 1.0f, 0.0f, 0.0f);
+	glRotatef(m_rotate_y, 0.0f, 0.0f, 1.0f);
+	//透视投影
+	//////////////////////////////////////////////
+	//gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
+	//////////////////////////////////////////////
 
-	RenderLight();
+	RenderLight();//灯光
 	RenderScene();//绘图都放在这
 
 	SwapBuffers(m_pDC->GetSafeHdc());
@@ -171,6 +184,7 @@ int CSceneEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  在此添加您专用的创建代码
 	InitializeOpenGL();//初始化openGL绘图
+
 	return 0;
 }
 
@@ -213,10 +227,16 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+
+	/////////////////////////////////////////////////////////////////
+	glOrtho(-cx / 100, cx / 100, -cy / 100, cy / 100, -100, 100);
+	/////////////////////////////////////////////////////////////////
+	//透视投影
+	/*
 	GLdouble aspect_ratio; // width/height ratio
 	aspect_ratio = (GLdouble)cx / (GLdouble)cy;
-	
 	gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
+	*/
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -271,6 +291,7 @@ BOOL CSceneEditorView::InitializeOpenGL()
 
 BOOL CSceneEditorView::SetupPixelFormat()
 {
+	
 	static PIXELFORMATDESCRIPTOR pfd =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),  // size of this pfd
@@ -285,7 +306,7 @@ BOOL CSceneEditorView::SetupPixelFormat()
 		0,                              // shift bit ignored
 		0,                              // no accumulation buffer
 		0, 0, 0, 0,                     // accum bits ignored
-		16,                             // 16-bit z-buffer
+		32,                             // 16-bit z-buffer
 		0,                              // no stencil buffer
 		0,                              // no auxiliary buffer
 		PFD_MAIN_PLANE,                 // main layer
@@ -302,6 +323,42 @@ BOOL CSceneEditorView::SetupPixelFormat()
 		return FALSE;
 	}
 	return TRUE;
+	
+	/*
+	PIXELFORMATDESCRIPTOR pfd = {
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+		PFD_TYPE_RGBA,
+		24,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0,
+		0, 0, 0, 0,
+		32,
+		0, 0,
+		PFD_MAIN_PLANE,
+		0, 0, 0, 0 };
+
+	int pixelformat;
+
+	PIXELFORMATDESCRIPTOR* pPFDtoUse;
+
+	pPFDtoUse = &pfd;
+
+	if (0 == (pixelformat = ::ChoosePixelFormat(m_pDC->GetSafeHdc(), pPFDtoUse)))
+	{
+		AfxMessageBox(L"ChoosePixelFormat failed");
+		return FALSE;
+	}
+
+	if (FALSE == ::SetPixelFormat(m_pDC->GetSafeHdc(), pixelformat, pPFDtoUse))
+	{
+		AfxMessageBox(L"SetPixelFormat failed");
+		return FALSE;
+	}
+
+	return TRUE;
+	*/
 }
 
 void CSceneEditorView::RenderScene()
@@ -330,6 +387,11 @@ void CSceneEditorView::RenderLight()
 		return;
 
 	glEnable(GL_LIGHTING);
+
+	glShadeModel(GL_SMOOTH);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	
 	auto list = pDoc->m_light_list;
 	int count = 0;
 	for (auto i = list.begin(); i != list.end(); i++)
@@ -368,6 +430,12 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
 	if (m_lbutton_down == true)
 	{
+		m_rotate_y = (m_rotate_y + (point.x - m_temp_x)) % 360;
+		m_rotate_x = (m_rotate_x + (point.y - m_temp_y)) % 360;
+		m_temp_x = point.x;
+		m_temp_y = point.y;
+		Invalidate(FALSE);
+		/*透视投影
 		GLfloat x = m_eye_x - m_center_x;
 		GLfloat y = m_eye_y - m_center_y;
 		GLfloat z = m_eye_z - m_center_z;
@@ -411,6 +479,7 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 		m_temp_x = point.x;
 		m_temp_y = point.y;
 		Invalidate(FALSE);
+		*/
 	}
 	CView::OnMouseMove(nFlags, point);
 }
@@ -563,4 +632,94 @@ CLight* CSceneEditorView::add_light()
 	CLight* pLight = pDoc->add_light();
 	Invalidate(FALSE);
 	return pLight;
+}
+
+//////////////////////////////////////////////////////////////////////
+/*
+* copy from http://blog.csdn.net/visualeleven/article/details/6206715
+* 调用方法
+* HWND hWnd = ::FindWindow(NULL, _T("XXX"));
+* if(hWnd)
+* {
+* SaveHwndToBmpFile(hWnd, _T("F://12.bmp"));
+* }
+*/
+//////////////////////////////////////////////////////////////////////
+void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
+{
+	HDC hDC = ::GetWindowDC(hWnd);
+	ASSERT(hDC);
+
+	HDC hMemDC = ::CreateCompatibleDC(hDC);
+	ASSERT(hMemDC);
+
+	RECT rc;
+	::GetWindowRect(hWnd, &rc);
+
+	HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, rc.right - rc.left, rc.bottom - rc.top);
+	ASSERT(hBitmap);
+
+	HBITMAP hOldBmp = (HBITMAP)::SelectObject(hMemDC, hBitmap);
+	::PrintWindow(hWnd, hMemDC, 0);
+
+	BITMAP bitmap = { 0 };
+	::GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+	BITMAPINFOHEADER bi = { 0 };
+	BITMAPFILEHEADER bf = { 0 };
+
+	CONST int nBitCount = 24;
+	bi.biSize = sizeof(BITMAPINFOHEADER);
+	bi.biWidth = bitmap.bmWidth;
+	bi.biHeight = bitmap.bmHeight;
+	bi.biPlanes = 1;
+	bi.biBitCount = nBitCount;
+	bi.biCompression = BI_RGB;
+	DWORD dwSize = ((bitmap.bmWidth * nBitCount + 31) / 32) * 4 * bitmap.bmHeight;
+
+	HANDLE hDib = GlobalAlloc(GHND, dwSize + sizeof(BITMAPINFOHEADER));
+	LPBITMAPINFOHEADER lpbi = (LPBITMAPINFOHEADER)GlobalLock(hDib);
+	*lpbi = bi;
+
+	::GetDIBits(hMemDC, hBitmap, 0, bitmap.bmHeight, (BYTE*)lpbi + sizeof(BITMAPINFOHEADER), (BITMAPINFO*)lpbi, DIB_RGB_COLORS);
+
+	try
+	{
+		CFile file;
+		file.Open(lpszPath, CFile::modeCreate | CFile::modeWrite);
+		bf.bfType = 0x4d42;
+		dwSize += sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+		bf.bfSize = dwSize;
+		bf.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+		file.Write((BYTE*)&bf, sizeof(BITMAPFILEHEADER));
+		file.Write((BYTE*)lpbi, dwSize);
+		file.Close();
+	}
+	catch (CFileException* e)
+	{
+		e->ReportError();
+		e->Delete();
+	}
+
+	GlobalUnlock(hDib);
+	GlobalFree(hDib);
+
+	::SelectObject(hMemDC, hOldBmp);
+	::DeleteObject(hBitmap);
+	::DeleteObject(hMemDC);
+	::ReleaseDC(hWnd, hDC);
+}
+//////////////////////////////////////////////////////////////////////
+
+
+void CSceneEditorView::OnCmdCapture()
+{
+	// TODO:  在此添加命令处理程序代码
+	// 调用方法  
+	
+	HWND hWnd = m_hWnd;//::FindWindow(NULL, _T("XXX"));
+	if (hWnd)
+	{
+		SaveHwndToBmpFile(hWnd, _T("123.bmp"));
+	}
 }

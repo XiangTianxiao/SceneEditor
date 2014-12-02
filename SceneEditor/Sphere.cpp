@@ -4,8 +4,8 @@
 
 CSphere::CSphere()
 {
-	m_slices = 10;
-	m_stacks = 10;
+	m_slices = 30;
+	m_stacks = 30;
 }
 
 

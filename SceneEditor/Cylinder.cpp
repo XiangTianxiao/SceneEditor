@@ -8,8 +8,8 @@ CCylinder::CCylinder()
 	m_baseRadius = 1.0;
 	m_topRadius = 1.0;
 	m_height = 1.0;
-	m_slices = 10;
-	m_stacks = 10;
+	m_slices = 30;
+	m_stacks = 30;
 }
 
 
@@ -25,9 +25,11 @@ void CCylinder::draw()
 	glPushMatrix();
 	Transform();
 	gluCylinder(m_quadricObj, m_baseRadius, m_topRadius, m_height, m_slices, m_stacks);
-	//top  
+	//top
+	glNormal3f(0, 0, 1);
 	DrawCircleArea(0.0, 0.0, m_height, m_topRadius, m_slices);
 	//base  
+	glNormal3f(0, 0, -1);
 	DrawCircleArea(0.0, 0.0, 0.0, m_baseRadius, m_slices);
 	glPopMatrix();
 

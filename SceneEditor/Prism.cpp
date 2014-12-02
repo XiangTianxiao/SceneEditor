@@ -58,10 +58,12 @@ void CPrism::DrawSide()
 	for (int i = 0; i <= m_edge; i++)
 	{
 
+
 		vertex[2] = 0.0;
 		vertex[0] = std::sin(delta_angle*i)*m_baseRadius;
 		vertex[1] = std::cos(delta_angle*i)*m_baseRadius;
 		glVertex4fv(vertex);
+
 		vertex[2] = m_height;
 		vertex[0] = std::sin(delta_angle*i)*m_topRadius;
 		vertex[1] = std::cos(delta_angle*i)*m_topRadius;

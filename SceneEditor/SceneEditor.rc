@@ -206,6 +206,8 @@ BEGIN
         MENUITEM "rename",                      ID_CMD_RENAME
         MENUITEM SEPARATOR
         MENUITEM "add_light",                   ID_CMD_ADD_LIGHT
+        MENUITEM SEPARATOR
+        MENUITEM "НиЭМ",                          ID_CMD_CAPTURE
     END
     POPUP "PolygonMode"
     BEGIN

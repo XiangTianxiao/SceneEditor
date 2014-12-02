@@ -30,6 +30,7 @@ END_MESSAGE_MAP()
 CSceneEditorDoc::CSceneEditorDoc()
 {
 	// TODO:  在此添加一次性构造代码
+	/*
 	{
 		CDocObj* pObj = new CDocObj(L"圆柱", CUBE);
 		m_obj_list.push_back(pObj);
@@ -40,6 +41,7 @@ CSceneEditorDoc::CSceneEditorDoc()
 		pObj->m_obj->m_x = 3.0;
 		m_obj_list.push_back(pObj);
 	}
+	*/
 	{
 		CLight* pLight = new CLight();
 		pLight->m_name = CString("light_0");
