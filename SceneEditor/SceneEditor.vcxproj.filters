@@ -75,6 +75,21 @@
     <ClInclude Include="DlgAddObj.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ObjFile.h">
+      <Filter>Cobj</Filter>
+    </ClInclude>
+    <ClInclude Include="float2.h">
+      <Filter>Cobj</Filter>
+    </ClInclude>
+    <ClInclude Include="float3.h">
+      <Filter>Cobj</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LightTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneEditor.cpp">
@@ -123,6 +138,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DlgAddObj.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjFile.cpp">
+      <Filter>Cobj</Filter>
+    </ClCompile>
+    <ClCompile Include="float2.cpp">
+      <Filter>Cobj</Filter>
+    </ClCompile>
+    <ClCompile Include="float3.cpp">
+      <Filter>Cobj</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LightTree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

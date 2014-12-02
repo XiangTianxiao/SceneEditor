@@ -68,7 +68,6 @@
 #define IDC_RADIO_ADD_PRISM             1002
 #define IDC_RADIO_ADD_SPHERE            1003
 #define IDC_EDIT_ADD_OBJ_NAME           1004
-#define IDC_RADIO1                      1005
 #define IDC_RADIO_ADD_OBJFILE           1005
 #define ID_32771                        32771
 #define ID_32772                        32772
@@ -84,13 +83,16 @@
 #define ID_CMD_ADD                      32782
 #define ID_CMD_DELETE                   32783
 #define ID_CMD_RENAME                   32784
+#define ID_32785                        32785
+#define ID_ADD_LIGHT                    32786
+#define ID_CMD_ADD_LIGHT                32787
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32785
+#define _APS_NEXT_COMMAND_VALUE         32788
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

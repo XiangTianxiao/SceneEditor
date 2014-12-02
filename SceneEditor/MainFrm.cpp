@@ -220,13 +220,25 @@ void CMainFrame::update_obj_tree(list<CDocObj*> obj_list)
 	m_wndFileView.FillFileView(obj_list);
 }
 
-void CMainFrame::draw_property(CString name)
+void CMainFrame::update_light_tree(list<CLight*> light_list)
+{
+	m_wndClassView.FillClassView(light_list);
+}
+
+void CMainFrame::draw_property(CString name, DRAW_TYPE type)
 {
 	CSceneEditorDoc* pDoc;
 	pDoc = (CSceneEditorDoc*)GetActiveDocument();
-	CDocObj* pObj = pDoc->draw_property(name, &m_wndProperties);
 
-	CSceneEditorView* pView = (CSceneEditorView*)GetActiveView();
-	pView->m_cur_obj = pObj;
+	if (type == DRAW_OBJ)
+	{
+		CDocObj* pObj = pDoc->draw_property(name, &m_wndProperties);
+		CSceneEditorView* pView = (CSceneEditorView*)GetActiveView();
+		pView->m_cur_obj = pObj;
+	}
+	else
+	{
+		pDoc->draw_light_property(name, &m_wndProperties);
+	}
 }
 

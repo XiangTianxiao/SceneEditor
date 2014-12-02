@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include "ViewTree.h"
-
+#include "LightTree.h"
 class CClassToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -22,13 +21,13 @@ public:
 	void AdjustLayout();
 	void OnChangeVisualStyle();
 
-protected:
+public:
 	CClassToolBar m_wndToolBar;
-	CViewTree m_wndClassView;
+	CLightTree m_wndLightView;
 	CImageList m_ClassViewImages;
 	UINT m_nCurrSort;
-
-	void FillClassView();
+	
+	void FillClassView(list<CLight*> light_list);
 
 // ÖØÐ´
 public:

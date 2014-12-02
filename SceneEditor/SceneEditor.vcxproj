@@ -107,8 +107,13 @@
     <ClInclude Include="DlgAddObj.h" />
     <ClInclude Include="DocObj.h" />
     <ClInclude Include="FileView.h" />
+    <ClInclude Include="float2.h" />
+    <ClInclude Include="float3.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightTree.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Obj.h" />
+    <ClInclude Include="ObjFile.h" />
     <ClInclude Include="Prism.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
@@ -127,8 +132,13 @@
     <ClCompile Include="DlgAddObj.cpp" />
     <ClCompile Include="DocObj.cpp" />
     <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="float2.cpp" />
+    <ClCompile Include="float3.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightTree.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Obj.cpp" />
+    <ClCompile Include="ObjFile.cpp" />
     <ClCompile Include="Prism.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="SceneEditor.cpp" />

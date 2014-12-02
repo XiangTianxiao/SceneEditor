@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_UPDATE_COMMAND_UI(ID_POLYGONMODE_LINE, &CSceneEditorView::OnUpdatePolygonmodeLine)
 	ON_UPDATE_COMMAND_UI(ID_POLYGONMODE_FILL, &CSceneEditorView::OnUpdatePolygonmodeFill)
 	ON_COMMAND(ID_CMD_ADD, &CSceneEditorView::OnCmdAdd)
+	ON_COMMAND(ID_CMD_ADD_LIGHT, &CSceneEditorView::OnCmdAddLight)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -70,6 +71,7 @@ CSceneEditorView::CSceneEditorView()
 	m_obj_type = CUBE;
 
 	m_need_update_obj_tree = true;
+	m_need_update_light_tree = true;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -105,15 +107,7 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 	
 	gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
 
-
-	glEnable(GL_LIGHTING);
-	GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_pos[] = { 5, 5, 5, 1 };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, white);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
-	glEnable(GL_LIGHT0);
-
+	RenderLight();
 	RenderScene();//绘图都放在这
 
 	SwapBuffers(m_pDC->GetSafeHdc());
@@ -123,6 +117,12 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
 		pFrame->update_obj_tree(pDoc->m_obj_list);
 		m_need_update_obj_tree = false;
+	}
+	if (m_need_update_light_tree == true)
+	{
+		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+		pFrame->update_light_tree(pDoc->m_light_list);
+		m_need_update_light_tree = false;
 	}
 }
 
@@ -322,6 +322,22 @@ void CSceneEditorView::RenderScene()
 	glFlush();
 }
 
+void CSceneEditorView::RenderLight()
+{
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	glEnable(GL_LIGHTING);
+	auto list = pDoc->m_light_list;
+	int count = 0;
+	for (auto i = list.begin(); i != list.end(); i++)
+	{
+		(*i)->draw_light(count);
+		count++;
+	}
+}
 
 void CSceneEditorView::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -515,3 +531,36 @@ CDocObj* CSceneEditorView::add_obj(CString name, CString file_name)
 	return pObj;
 }
 
+
+
+void CSceneEditorView::OnCmdAddLight()
+{
+	// TODO:  在此添加命令处理程序代码
+
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	if (pDoc->m_light_list.size() == 8)
+	{
+		MessageBox(_T("最多只能有8个灯光!"));
+		return;
+	}
+	else
+	{
+		m_view_op = VIEW_SELECT;
+		add_light();
+		m_need_update_light_tree = true;
+	}
+}
+
+CLight* CSceneEditorView::add_light()
+{
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return NULL;
+	CLight* pLight = pDoc->add_light();
+	Invalidate(FALSE);
+	return pLight;
+}

@@ -41,14 +41,14 @@ BOOL CViewTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return bRes;
 }
 
-
 void CViewTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO:  在此添加控件通知处理程序代码
 	CString obj_name = GetItemText(pNMTreeView->itemNew.hItem);
 	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
-	pFrame->draw_property(obj_name);
-	pFrame->m_obj_name = obj_name;
+	pFrame->draw_property(obj_name, DRAW_OBJ);
+	pFrame->m_obj_or_light_name = obj_name;
+	pFrame->m_draw_type = DRAW_OBJ;
 	*pResult = 0;
 }

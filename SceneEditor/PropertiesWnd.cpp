@@ -276,13 +276,19 @@ LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
 {
 	//改变值
 	CMFCPropertyGridProperty* pProp = (CMFCPropertyGridProperty*)lParam;
-	m_pObj->change_value(pProp);
-	//刷新
 	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
 	CSceneEditorView *pView = (CSceneEditorView*)(pFrame->GetActiveView());
+
+	if (m_type == DRAW_OBJ)
+	{
+		m_pObj->change_value(pProp);
+	//重绘属性
+		pFrame->draw_property(pFrame->m_obj_or_light_name, pFrame->m_draw_type);
+	}
+	else if (m_type == DRAW_LIGHT)
+		m_pLight->change_value(pProp);
+	//刷新
 	pView->Invalidate(FALSE);
-	
-	pFrame->draw_property(pFrame->m_obj_name);
 
 	return 0;
 }

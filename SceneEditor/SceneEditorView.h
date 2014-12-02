@@ -36,6 +36,7 @@ public:
 	BOOL InitializeOpenGL();    //Initialize OpenGL
 	BOOL SetupPixelFormat();    //Set up the Pixel Format
 	void RenderScene();            //Render the Scene
+	void RenderLight();
 	//视图
 	bool m_lbutton_down;
 	GLfloat m_eye_x;
@@ -59,9 +60,11 @@ public:
 	OBJ_TYPE m_obj_type;
 	CDocObj* add_obj(OBJ_TYPE type, CString name);
 	CDocObj* add_obj(CString name, CString file_name);
+	CLight* add_light();
 	CDocObj* m_cur_obj;
 
 	bool m_need_update_obj_tree;
+	bool m_need_update_light_tree;
 
 protected: // 仅从序列化创建
 	CSceneEditorView();
@@ -115,6 +118,7 @@ public:
 	afx_msg void OnUpdatePolygonmodeLine(CCmdUI *pCmdUI);
 	afx_msg void OnUpdatePolygonmodeFill(CCmdUI *pCmdUI);
 	afx_msg void OnCmdAdd();
+	afx_msg void OnCmdAddLight();
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

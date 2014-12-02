@@ -25,12 +25,34 @@ CDocObj::CDocObj(CString name, OBJ_TYPE type)
 	}
 
 	m_whether_texture = false;
+	m_texture_loaded = false;
 	m_bitmapData = NULL;
 }
 
 CDocObj::CDocObj(CString name, CString file_name)
 {
+	m_name = name;
+	m_type = OBJ_FILE;
+	CObjFile* m_objfile = new CObjFile();
 
+	//M$我操你大爷，搞得这么麻烦
+	//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
+	int n = file_name.GetLength();    // n = 14, len = 18
+	//获取宽字节字符的大小，大小是按字节计算的
+	int len = WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), NULL, 0, NULL, NULL);
+	//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
+	char * pFileName = new char[len + 1];  //以字节为单位
+	//宽字节编码转换成多字节编码
+	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), pFileName, len, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
+	pFileName[len + 1] = 0;  //多字节字符以'/0'结束
+
+	m_objfile->loadObj(pFileName);
+
+	m_obj = (CObj*)m_objfile;
+
+	m_whether_texture = false;
+	m_bitmapData = NULL;
 }
 
 
@@ -57,6 +79,9 @@ void CDocObj::draw_property(CMFCPropertyGridCtrl* PropList)
 	case SPHERE:
 		draw_property_sphere(PropList);
 		break;
+	case OBJ_FILE:
+		draw_property_objfile(PropList);
+		break;
 	default:
 		throw CString("draw_property");
 		break;
@@ -65,7 +90,7 @@ void CDocObj::draw_property(CMFCPropertyGridCtrl* PropList)
 
 void CDocObj::draw()
 {
-	if (m_whether_texture == true)
+	if (m_whether_texture == true && m_texture_loaded == true)
 	{
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glEnable(GL_TEXTURE_2D);
@@ -145,7 +170,10 @@ void CDocObj::draw_property_sphere(CMFCPropertyGridCtrl* PropList)
 {
 
 }
+void CDocObj::draw_property_objfile(CMFCPropertyGridCtrl* PropList)
+{
 
+}
 void CDocObj::change_value(CMFCPropertyGridProperty* pProp)
 {
 	CString name = pProp->GetName();  //被改变的参数名
@@ -224,10 +252,12 @@ void CDocObj::change_value(CMFCPropertyGridProperty* pProp)
 		WideCharToMultiByte(CP_ACP, 0, m_texture_file_name, m_texture_file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
 		pFileName[len + 1] = 0;  //多字节字符以'/0'结束
 
+		glGenTextures(1, &m_texture);
 		texload(pFileName);
 
 		return;
 	}
+
 }
 
 void CDocObj::texload(const char *filename)
@@ -249,6 +279,7 @@ void CDocObj::texload(const char *filename)
 		GL_RGB,	//bitmap数据的格式
 		GL_UNSIGNED_BYTE, //每个颜色数据的类型
 		m_bitmapData);	//bitmap数据指针  
+	m_texture_loaded = true;
 }
 
 unsigned char* CDocObj::LoadBitmapFile(const char *filename, BITMAPINFOHEADER *bitmapInfoHeader)

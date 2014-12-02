@@ -8,7 +8,7 @@
 #include <list>
 using namespace std;
 #include "DocObj.h"
-
+#include "Light.h"
 #include "PropertiesWnd.h"
 
 class CSceneEditorDoc : public CDocument
@@ -20,11 +20,14 @@ protected: // 仅从序列化创建
 // 特性
 public:
 	list<CDocObj*> m_obj_list;
+	list<CLight*> m_light_list;
 // 操作
 public:
 	CDocObj* draw_property(CString name, CPropertiesWnd* pProperties);
+	CLight* draw_light_property(CString name, CPropertiesWnd* pProperties);
 	CDocObj* add_obj(OBJ_TYPE type, CString name);
 	CDocObj* add_obj(CString name, CString file_name);
+	CLight* add_light();
 	CString case_name_overlap(CString name, int num);
 
 // 重写

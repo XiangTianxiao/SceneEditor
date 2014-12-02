@@ -59,6 +59,12 @@ enum OBJ_TYPE
 	OBJ_FILE
 };
 
+enum DRAW_TYPE
+{
+	DRAW_OBJ,
+	DRAW_LIGHT
+};
+
 
 #include "DocObj.h"
 

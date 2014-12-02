@@ -18,11 +18,13 @@ protected: // 仅从序列化创建
 
 // 特性
 public:
-	CString m_obj_name;
+	CString m_obj_or_light_name;
+	DRAW_TYPE m_draw_type;
 // 操作
 public:
-	void draw_property(CString name);
+	void draw_property(CString name, DRAW_TYPE type);
 	void update_obj_tree(list<CDocObj*> obj_list);
+	void update_light_tree(list<CLight*> light_list);
 // 重写
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

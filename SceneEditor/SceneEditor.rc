@@ -204,6 +204,8 @@ BEGIN
         MENUITEM "add",                         ID_CMD_ADD
         MENUITEM "delete",                      ID_CMD_DELETE
         MENUITEM "rename",                      ID_CMD_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "add_light",                   ID_CMD_ADD_LIGHT
     END
     POPUP "PolygonMode"
     BEGIN

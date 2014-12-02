@@ -16,6 +16,8 @@ public:
 class CPropertiesWnd : public CDockablePane
 {
 public:
+	DRAW_TYPE m_type;
+	CLight* m_pLight;
 	CDocObj* m_pObj;
 // ππ‘Ï
 public:

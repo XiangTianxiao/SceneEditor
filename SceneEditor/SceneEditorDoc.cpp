@@ -40,11 +40,21 @@ CSceneEditorDoc::CSceneEditorDoc()
 		pObj->m_obj->m_x = 3.0;
 		m_obj_list.push_back(pObj);
 	}
-	
 	{
-		//cube 不过还不能使用，因为使用了glut库
-		//CDocObj* pObj = new CDocObj(L"圆柱", CYLINDER);
-		//m_obj_list.push_back(pObj);
+		CLight* pLight = new CLight();
+		pLight->m_name = CString("light_0");
+		pLight->m_light_pos[0] = 0;
+		pLight->m_light_pos[1] = 0;
+		pLight->m_light_pos[2] = 5;
+		m_light_list.push_back(pLight);
+	}
+	{
+		CLight* pLight = new CLight();
+		pLight->m_name = CString("light_1");
+		pLight->m_light_pos[0] = 0;
+		pLight->m_light_pos[1] = 0;
+		pLight->m_light_pos[2] = -5;
+		m_light_list.push_back(pLight);
 	}
 }
 
@@ -158,6 +168,23 @@ CDocObj* CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pPropertie
 		if ((*i)->m_name == name)
 		{
 			pProperties->m_pObj = *i;
+			pProperties->m_type = DRAW_OBJ;
+			(*i)->draw_property(&pProperties->m_wndPropList);
+			return *i;
+		}
+	}
+	throw CString("CDocObj* CSceneEditorDoc::draw_property(CString name, CPropertiesWnd* pProperties)");
+
+}
+
+CLight* CSceneEditorDoc::draw_light_property(CString name, CPropertiesWnd* pProperties)
+{
+	for (auto i = m_light_list.begin(); i != m_light_list.end(); i++)
+	{
+		if ((*i)->m_name == name)
+		{
+			pProperties->m_pLight = *i;
+			pProperties->m_type = DRAW_LIGHT;
 			(*i)->draw_property(&pProperties->m_wndPropList);
 			return *i;
 		}
@@ -200,4 +227,29 @@ CString CSceneEditorDoc::case_name_overlap(CString name, int num)
 			return return_name = case_name_overlap(name, num + 1);
 	}
 	return t_name;
+}
+
+CLight* CSceneEditorDoc::add_light()
+{
+	CLight* pLight = new CLight();
+	if (pLight == NULL)
+		throw CString("CLight* CSceneEditorDoc::add_light()");
+	/////////////////////////////////////////////////
+	//名字
+	CString newname;
+	if (m_light_list.size() == 0)
+		newname = _T("light_0");
+	else
+	{
+		auto pLastLight = m_light_list.rbegin();//最后一个
+		CString lastname = (*pLastLight)->m_name;
+		int find = lastname.Find('_');
+		lastname.Right(lastname.GetLength() - find - 1);
+		int a = _ttoi(lastname);
+		newname.Format(_T("light_%d"), a + 1);
+	}
+	pLight->m_name = newname;
+	/////////////////////////////////////////////////
+	m_light_list.push_back(pLight);
+	return pLight;
 }

@@ -114,9 +114,11 @@ BOOL CDlgAddObj::OnInitDialog()
 			m_add_obj_name = "sphere";
 		break;
 	case OBJ_FILE:
-		CheckDlgButton(IDC_RADIO_ADD_OBJFILE, BST_CHECKED);
+		//这样写是没有错误的，因为第二次添加的时候，如果不重新打开文件的话，会导致file_name为空，报错
+		CheckDlgButton(IDC_RADIO_ADD_CUBE, BST_CHECKED);
 		if (m_add_obj_name == "默认名称" || m_add_obj_name == "cube" || m_add_obj_name == "cylinder" || m_add_obj_name == "prism" || m_add_obj_name == "sphere" || m_add_obj_name == "obj_file")
-			m_add_obj_name = "obj_file";
+			m_add_obj_name = "cube";
+		m_obj_type = CUBE;
 		break;
 	default:
 		CheckDlgButton(IDC_RADIO_ADD_CUBE, BST_CHECKED);
