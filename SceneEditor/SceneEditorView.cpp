@@ -47,6 +47,8 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_COMMAND(ID_CMD_ADD, &CSceneEditorView::OnCmdAdd)
 	ON_COMMAND(ID_CMD_ADD_LIGHT, &CSceneEditorView::OnCmdAddLight)
 	ON_COMMAND(ID_CMD_CAPTURE, &CSceneEditorView::OnCmdCapture)
+	ON_WM_MOUSEWHEEL()
+	ON_COMMAND(ID_CMD_DELETE, &CSceneEditorView::OnCmdDelete)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -56,6 +58,10 @@ CSceneEditorView::CSceneEditorView()
 	// TODO:  在此处添加构造代码
 	m_rotate_x = 0;
 	m_rotate_y = 0;
+	m_rotate_z = 0;
+
+	m_move_x = 0;
+	m_move_y = 0;
 
 	/*透视投影
 	m_eye_x = 10;
@@ -77,6 +83,10 @@ CSceneEditorView::CSceneEditorView()
 
 	m_need_update_obj_tree = true;
 	m_need_update_light_tree = true;
+
+	m_zoom = 100;
+
+	m_selected_is_valid = false;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -93,7 +103,7 @@ BOOL CSceneEditorView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CSceneEditorView 绘制
 
-void CSceneEditorView::OnDraw(CDC* /*pDC*/)
+void CSceneEditorView::OnDraw(CDC* pDC)
 {
 	CSceneEditorDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -110,11 +120,11 @@ void CSceneEditorView::OnDraw(CDC* /*pDC*/)
 
 	glLoadIdentity();
 	//////////////////////////////////	
-	//glOrtho(-3, 3, -3, 3, -100, 100);
-	glTranslatef(0, 0, -10);
-	//glRotatef(-90.0, 1.0f, 0.0f, 0.0f);
+	//平行投影
+	glTranslatef(m_move_x, m_move_y, 0);
 	glRotatef(m_rotate_x, 1.0f, 0.0f, 0.0f);
-	glRotatef(m_rotate_y, 0.0f, 0.0f, 1.0f);
+	glRotatef(m_rotate_y, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_rotate_z, 0.0f, 0.0f, 1.0f);
 	//透视投影
 	//////////////////////////////////////////////
 	//gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
@@ -229,7 +239,11 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	glLoadIdentity();
 
 	/////////////////////////////////////////////////////////////////
-	glOrtho(-cx / 100, cx / 100, -cy / 100, cy / 100, -100, 100);
+	//平行投影
+	m_cx = cx;
+	m_cy = cy;
+	glOrtho(-cx / m_zoom, cx / m_zoom, -cy / m_zoom, cy / m_zoom, -100, 100);
+	//glOrtho(-cx / 100, cx / 100, -cy / 100, cy / 100, -100, 100);
 	/////////////////////////////////////////////////////////////////
 	//透视投影
 	/*
@@ -285,6 +299,8 @@ BOOL CSceneEditorView::InitializeOpenGL()
 	//Enable Depth Testing
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
+	//自动计算法向量
+	//glEnable(GL_AUTO_NORMAL);
 	return TRUE;
 
 }
@@ -323,42 +339,6 @@ BOOL CSceneEditorView::SetupPixelFormat()
 		return FALSE;
 	}
 	return TRUE;
-	
-	/*
-	PIXELFORMATDESCRIPTOR pfd = {
-		sizeof(PIXELFORMATDESCRIPTOR),
-		1,
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-		PFD_TYPE_RGBA,
-		24,
-		0, 0, 0, 0, 0, 0,
-		0, 0, 0,
-		0, 0, 0, 0,
-		32,
-		0, 0,
-		PFD_MAIN_PLANE,
-		0, 0, 0, 0 };
-
-	int pixelformat;
-
-	PIXELFORMATDESCRIPTOR* pPFDtoUse;
-
-	pPFDtoUse = &pfd;
-
-	if (0 == (pixelformat = ::ChoosePixelFormat(m_pDC->GetSafeHdc(), pPFDtoUse)))
-	{
-		AfxMessageBox(L"ChoosePixelFormat failed");
-		return FALSE;
-	}
-
-	if (FALSE == ::SetPixelFormat(m_pDC->GetSafeHdc(), pixelformat, pPFDtoUse))
-	{
-		AfxMessageBox(L"SetPixelFormat failed");
-		return FALSE;
-	}
-
-	return TRUE;
-	*/
 }
 
 void CSceneEditorView::RenderScene()
@@ -376,9 +356,77 @@ void CSceneEditorView::RenderScene()
 		(*i)->draw();
 	}
 
+	MarkSelected();
+
 	glFlush();
 }
+void CSceneEditorView::MarkSelected()
+{
+	draw_selected_cube(0, 0, 0, 0, 0, 0);
+	if (m_selected_is_valid == true)
+	{
+		if (m_cur_type == DRAW_OBJ)
+		{
 
+		}
+		else if (m_cur_type == DRAW_LIGHT)
+		{
+
+		}
+	}
+}
+
+void CSceneEditorView::draw_selected_cube(GLfloat center_x, GLfloat center_y, GLfloat center_z, GLfloat length, GLfloat width, GLfloat height)
+{
+	glPushMatrix();
+	glDisable(GL_LIGHTING);
+	glColor3f(0, 1, 1);	
+	
+	// 前面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
+	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
+	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的右上
+	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的左上
+	glEnd();
+	// 后面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的右下
+	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
+	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
+	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的左下
+	glEnd();
+	// 顶面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
+	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的左下
+	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的右下
+	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
+	glEnd();
+	// 底面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的右上
+	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的左上
+	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
+	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
+	glEnd();
+	// 右面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的右下
+	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
+	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的左上
+	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
+	glEnd();
+	// 左面
+	glBegin(GL_LINE_LOOP);
+	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的左下
+	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
+	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的右上
+	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}
 void CSceneEditorView::RenderLight()
 {
 	CSceneEditorDoc* pDoc = GetDocument();
@@ -428,10 +476,28 @@ int CSceneEditorView::sign(GLfloat x)
 void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
-	if (m_lbutton_down == true)
+	if (nFlags&MK_LBUTTON)
 	{
-		m_rotate_y = (m_rotate_y + (point.x - m_temp_x)) % 360;
-		m_rotate_x = (m_rotate_x + (point.y - m_temp_y)) % 360;
+		switch (m_view_op)
+		{
+		case NONE:
+			break;
+		case VIEW_ROTATE:
+			m_rotate_z = (m_rotate_z + (point.x - m_temp_x)) % 360;
+			if (nFlags&MK_CONTROL)
+				m_rotate_y = (m_rotate_y + (point.y - m_temp_y)) % 360;
+			else
+				m_rotate_x = (m_rotate_x + (point.y - m_temp_y)) % 360;
+			break;
+		case VIEW_MOVE:
+			m_move_x += (point.x - m_temp_x) / 50.0;
+			m_move_y -= (point.y - m_temp_y) / 50.0;
+			break;
+		case VIEW_SELECT:
+			break;
+		default:
+			break;
+		}
 		m_temp_x = point.x;
 		m_temp_y = point.y;
 		Invalidate(FALSE);
@@ -450,31 +516,31 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 		switch (m_view_op)
 		{
 		case NONE:
-			break;
+		break;
 		case VIEW_ROTATE:
-			x += dx*0.05*y / r;
-			y -= dx*0.05*x / r;
-			t_r = sqrt(x*x + y*y);
-			x = x / t_r*r;
-			y = y / t_r*r;
-			if (!((dy > 0 && z > 17.2) || (dy < 0 && z < -17.2)))
-			{
-				z += dy*0.05*r;
-				x = x - z*dy*0.05*x / r;
-				y = y - z*dy*0.05*y / r;
-				t_R = sqrt(x*x + y*y + z*z);
-				x = x / t_R*R;
-				y = y / t_R*R;
-				z = z / t_R*R;
-			}
-			m_eye_x = x + m_center_x;
-			m_eye_y = y + m_center_y;
-			m_eye_z = z + m_center_z;
-			break;
+		x += dx*0.05*y / r;
+		y -= dx*0.05*x / r;
+		t_r = sqrt(x*x + y*y);
+		x = x / t_r*r;
+		y = y / t_r*r;
+		if (!((dy > 0 && z > 17.2) || (dy < 0 && z < -17.2)))
+		{
+		z += dy*0.05*r;
+		x = x - z*dy*0.05*x / r;
+		y = y - z*dy*0.05*y / r;
+		t_R = sqrt(x*x + y*y + z*z);
+		x = x / t_R*R;
+		y = y / t_R*R;
+		z = z / t_R*R;
+		}
+		m_eye_x = x + m_center_x;
+		m_eye_y = y + m_center_y;
+		m_eye_z = z + m_center_z;
+		break;
 		case VIEW_MOVE:
-			break;
+		break;
 		default:
-			break;
+		break;
 		}
 		m_temp_x = point.x;
 		m_temp_y = point.y;
@@ -646,7 +712,7 @@ CLight* CSceneEditorView::add_light()
 */
 //////////////////////////////////////////////////////////////////////
 void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
-{
+{	
 	HDC hDC = ::GetWindowDC(hWnd);
 	ASSERT(hDC);
 
@@ -661,6 +727,8 @@ void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
 
 	HBITMAP hOldBmp = (HBITMAP)::SelectObject(hMemDC, hBitmap);
 	::PrintWindow(hWnd, hMemDC, 0);
+
+
 
 	BITMAP bitmap = { 0 };
 	::GetObject(hBitmap, sizeof(BITMAP), &bitmap);
@@ -708,18 +776,84 @@ void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
 	::DeleteObject(hBitmap);
 	::DeleteObject(hMemDC);
 	::ReleaseDC(hWnd, hDC);
+	
+
 }
 //////////////////////////////////////////////////////////////////////
-
 
 void CSceneEditorView::OnCmdCapture()
 {
 	// TODO:  在此添加命令处理程序代码
 	// 调用方法  
-	
-	HWND hWnd = m_hWnd;//::FindWindow(NULL, _T("XXX"));
-	if (hWnd)
+	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		NULL,
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("bmp Files (*.bmp)|*.bmp|"),
+		NULL);
+	if (dlg.DoModal() == IDOK)
 	{
-		SaveHwndToBmpFile(hWnd, _T("123.bmp"));
+		CString file_name = dlg.GetPathName();
+		HWND hWnd = m_hWnd;
+		if (hWnd)
+		{
+			SaveHwndToBmpFile(hWnd, file_name);
+		}
 	}
+}
+
+
+BOOL CSceneEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	m_zoom += zDelta / 10.0;
+	if (m_zoom < 5)
+		m_zoom -= zDelta / 10.0;
+	if (m_zoom > 1000)
+		m_zoom -= zDelta / 10.0;
+	//哎，最后只能这样用。到底怎么发WM_SIZE消息啊
+	OnSize(0, m_cx, m_cy);
+	Invalidate(FALSE);
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+void CSceneEditorView::OnCmdDelete()
+{
+	// TODO:  在此添加命令处理程序代码
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	pFrame->remove_all_prop_list();
+	if (m_cur_type == DRAW_OBJ)
+	{
+		for (auto i = pDoc->m_obj_list.begin(); i != pDoc->m_obj_list.end(); i++)
+		{
+			if (*i == m_cur_obj)
+			{
+				(*i)->~CDocObj();
+				pDoc->m_obj_list.remove(*i);
+				m_selected_is_valid = false;
+				break;
+			}
+		}
+		m_need_update_obj_tree = true;
+	}
+	else if (m_cur_type == DRAW_LIGHT)
+	{
+		auto list = pDoc->m_light_list;
+		for (auto i = pDoc->m_light_list.begin(); i != pDoc->m_light_list.end(); i++)
+		{
+			if (*i == m_cur_light)
+			{
+				(*i)->~CLight();
+				pDoc->m_light_list.remove(*i);
+				m_selected_is_valid = false;
+				break;
+			}
+		}
+		m_need_update_light_tree = true;
+	}
+	Invalidate(FALSE);
 }

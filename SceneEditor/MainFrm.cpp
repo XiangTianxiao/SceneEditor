@@ -229,16 +229,24 @@ void CMainFrame::draw_property(CString name, DRAW_TYPE type)
 {
 	CSceneEditorDoc* pDoc;
 	pDoc = (CSceneEditorDoc*)GetActiveDocument();
+	CSceneEditorView* pView = (CSceneEditorView*)GetActiveView();
+	pView->m_cur_type = type;
 
 	if (type == DRAW_OBJ)
 	{
 		CDocObj* pObj = pDoc->draw_property(name, &m_wndProperties);
-		CSceneEditorView* pView = (CSceneEditorView*)GetActiveView();
 		pView->m_cur_obj = pObj;
+		pView->m_obj_type = pObj->m_type;
 	}
-	else
+	else//type==BRAW_LIGHT
 	{
-		pDoc->draw_light_property(name, &m_wndProperties);
+		CLight* pLight = pDoc->draw_light_property(name, &m_wndProperties);
+		pView->m_cur_light = pLight;
 	}
+	pView->m_selected_is_valid = true;
 }
 
+void CMainFrame::remove_all_prop_list()
+{
+	m_wndProperties.m_wndPropList.RemoveAll();
+}

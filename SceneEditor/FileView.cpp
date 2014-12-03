@@ -42,6 +42,7 @@ END_MESSAGE_MAP()
 
 int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
+	m_init = false;
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
@@ -78,7 +79,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 填入一些静态树视图数据(此处只需填入虚拟代码，而不是复杂的数据)
 	//FillFileView();
 	AdjustLayout();
-
+	m_init = true;
 	return 0;
 }
 
@@ -90,6 +91,9 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 
 void CFileView::FillFileView(list<CDocObj*> obj_list)
 {
+	if (m_init == false)
+		return;
+	m_wndFileView.InsertItem(_T("test"));
 	m_wndFileView.DeleteAllItems();
 	for (auto i = obj_list.begin(); i != obj_list.end(); i++)
 	{

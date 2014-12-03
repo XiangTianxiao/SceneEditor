@@ -280,13 +280,15 @@ LRESULT CPropertiesWnd::OnPropertyChanged(WPARAM, LPARAM lParam)
 	CSceneEditorView *pView = (CSceneEditorView*)(pFrame->GetActiveView());
 
 	if (m_type == DRAW_OBJ)
-	{
 		m_pObj->change_value(pProp);
-	//重绘属性
-		pFrame->draw_property(pFrame->m_obj_or_light_name, pFrame->m_draw_type);
-	}
 	else if (m_type == DRAW_LIGHT)
 		m_pLight->change_value(pProp);
+
+	//重绘属性
+	CString name = pProp->GetName();
+	if (name == "是否纹理")
+		pFrame->draw_property(pFrame->m_obj_or_light_name, pFrame->m_draw_type);
+
 	//刷新
 	pView->Invalidate(FALSE);
 

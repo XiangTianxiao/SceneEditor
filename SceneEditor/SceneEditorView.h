@@ -36,7 +36,10 @@ public:
 	BOOL InitializeOpenGL();    //Initialize OpenGL
 	BOOL SetupPixelFormat();    //Set up the Pixel Format
 	void RenderScene();            //Render the Scene
+	void MarkSelected();
 	void RenderLight();
+
+	void draw_selected_cube(GLfloat center_x, GLfloat center_y, GLfloat center_z, GLfloat length,GLfloat width,GLfloat height);
 	//视图
 	bool m_lbutton_down;
 	/*透视投影
@@ -54,6 +57,10 @@ public:
 	int m_temp_y;
 	int m_rotate_x;
 	int m_rotate_y;
+	int m_rotate_z;
+
+	GLfloat m_move_x;
+	GLfloat m_move_y;
 
 	int sign(GLfloat x);
 
@@ -61,17 +68,23 @@ public:
 	//PolygonMode
 	POLYGON_MODE m_PolygonMode;
 	//dlg add obj
-	OBJ_TYPE m_obj_type;
 	CDocObj* add_obj(OBJ_TYPE type, CString name);
 	CDocObj* add_obj(CString name, CString file_name);
 	CLight* add_light();
+
+	//当前的类型
+	bool m_selected_is_valid;
+	DRAW_TYPE m_cur_type;
+	OBJ_TYPE m_obj_type;
 	CDocObj* m_cur_obj;
+	CLight* m_cur_light;
 
 	bool m_need_update_obj_tree;
 	bool m_need_update_light_tree;
 	//窗口截图
 	void SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath);
-
+	GLfloat m_zoom;
+	int m_cx, m_cy;//也就是窗口大小
 protected: // 仅从序列化创建
 	CSceneEditorView();
 	DECLARE_DYNCREATE(CSceneEditorView)
@@ -126,6 +139,8 @@ public:
 	afx_msg void OnCmdAdd();
 	afx_msg void OnCmdAddLight();
 	afx_msg void OnCmdCapture();
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnCmdDelete();
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

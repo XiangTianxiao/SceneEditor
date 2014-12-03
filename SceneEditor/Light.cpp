@@ -13,6 +13,8 @@ CLight::CLight()
 	m_light_pos[1] = 0;
 	m_light_pos[2] = 0;
 	m_light_pos[3] = 1;
+
+	m_on = true;
 }
 
 
@@ -22,6 +24,8 @@ CLight::~CLight()
 
 void CLight::draw_light(int num)
 {
+	if (m_on == false)
+		return;
 	if (num < 0 || num>7)
 		throw "void CLight::draw_light(int num),只能有八个灯光！";
 	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, m_color);

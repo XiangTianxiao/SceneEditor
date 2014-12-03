@@ -25,6 +25,7 @@ public:
 	void draw_property(CString name, DRAW_TYPE type);
 	void update_obj_tree(list<CDocObj*> obj_list);
 	void update_light_tree(list<CLight*> light_list);
+	void remove_all_prop_list();
 // ÖØÐ´
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

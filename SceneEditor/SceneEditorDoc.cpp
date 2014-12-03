@@ -58,6 +58,7 @@ CSceneEditorDoc::CSceneEditorDoc()
 		pLight->m_light_pos[2] = -5;
 		m_light_list.push_back(pLight);
 	}
+	 
 }
 
 CSceneEditorDoc::~CSceneEditorDoc()
@@ -245,8 +246,8 @@ CLight* CSceneEditorDoc::add_light()
 	{
 		auto pLastLight = m_light_list.rbegin();//最后一个
 		CString lastname = (*pLastLight)->m_name;
-		int find = lastname.Find('_');
-		lastname.Right(lastname.GetLength() - find - 1);
+		int find = lastname.Find(_T('_'));
+		lastname = lastname.Right(lastname.GetLength() - find - 1);
 		int a = _ttoi(lastname);
 		newname.Format(_T("light_%d"), a + 1);
 	}

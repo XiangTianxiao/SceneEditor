@@ -58,7 +58,26 @@ CDocObj::CDocObj(CString name, CString file_name)
 
 CDocObj::~CDocObj()
 {
-	delete m_obj;
+	switch (m_type)
+	{
+	case CUBE:
+		((CCube*)m_obj)->~CCube();
+		break;
+	case CYLINDER:
+		((CCylinder*)m_obj)->~CCylinder();
+		break;
+	case PRISM:
+		((CPrism*)m_obj)->~CPrism();
+		break;
+	case SPHERE:
+		((CSphere*)m_obj)->~CSphere();
+		break;
+	case OBJ_FILE:
+		((CObjFile*)m_obj)->~CObjFile();
+		break;
+	default:
+		break;
+	}
 }
 
 void CDocObj::draw_property(CMFCPropertyGridCtrl* PropList)

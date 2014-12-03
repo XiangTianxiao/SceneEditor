@@ -185,14 +185,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "退出(&X)",                      ID_APP_EXIT
     END
-    POPUP "编辑(&E)"
-    BEGIN
-        MENUITEM "撤消(&U)\tCtrl+Z",              ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
-        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
-        MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
-    END
     POPUP "视图"
     BEGIN
         MENUITEM "选择",                          ID_MENU_SELECT
@@ -201,15 +193,16 @@ BEGIN
     END
     POPUP "命令"
     BEGIN
-        MENUITEM "add",                         ID_CMD_ADD
-        MENUITEM "delete",                      ID_CMD_DELETE
-        MENUITEM "rename",                      ID_CMD_RENAME
+        MENUITEM "添加物体",                        ID_CMD_ADD
+        MENUITEM "删除物体",                        ID_CMD_DELETE
+        MENUITEM "重名名物体",                       ID_CMD_RENAME
         MENUITEM SEPARATOR
-        MENUITEM "add_light",                   ID_CMD_ADD_LIGHT
+        MENUITEM "添加灯光",                        ID_CMD_ADD_LIGHT
+        MENUITEM "删除灯光",                        ID_CMD_DELETE_LIGHT
         MENUITEM SEPARATOR
         MENUITEM "截图",                          ID_CMD_CAPTURE
     END
-    POPUP "PolygonMode"
+    POPUP "模式"
     BEGIN
         MENUITEM "LINE",                        ID_POLYGONMODE_LINE
         MENUITEM "FILL",                        ID_POLYGONMODE_FILL
