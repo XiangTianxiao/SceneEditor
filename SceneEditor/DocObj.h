@@ -36,5 +36,7 @@ public:
 
 	void texload(const char *filename);
 	unsigned char *LoadBitmapFile(const char *filename, BITMAPINFOHEADER *bitmapInfoHeader);
+
+	void exportobj(CString filename);
 };
 

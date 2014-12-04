@@ -1,3 +1,5 @@
+// the shadow part is copied from Shadow Mapping Tutorial
+// his website is http://www.paulsprojects.net
 
 // SceneEditorView.cpp : CSceneEditorView 类的实现
 //
@@ -13,6 +15,7 @@
 #include "SceneEditorDoc.h"
 #include "SceneEditorView.h"
 #include "DlgAddObj.h"
+
 
 
 #ifdef _DEBUG
@@ -49,9 +52,95 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_COMMAND(ID_CMD_CAPTURE, &CSceneEditorView::OnCmdCapture)
 	ON_WM_MOUSEWHEEL()
 	ON_COMMAND(ID_CMD_DELETE, &CSceneEditorView::OnCmdDelete)
+	ON_COMMAND(ID_CMD_EXPORT_OBJ, &CSceneEditorView::OnCmdExportObj)
+	ON_UPDATE_COMMAND_UI(ID_CMD_EXPORT_OBJ, &CSceneEditorView::OnUpdateCmdExportObj)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+//阴影
+//Camera & light positions
+/*
+VECTOR3D cameraPosition(10.0f, 10.0f, 10.0f);
+VECTOR3D lightPosition(5.0f, 5.0f, 5.0f);
+
+//Size of shadow map
+const int shadowMapSize = 512;
+
+//Textures
+GLuint shadowMapTexture;
+
+//window size
+int windowWidth, windowHeight;
+
+//Matrices
+MATRIX4X4 lightProjectionMatrix, lightViewMatrix;
+MATRIX4X4 cameraProjectionMatrix, cameraViewMatrix;
+*/
+///////////////////////////////////////////////////////////////////////////
+
+
+
+
+void grid()
+{
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	//为什么没有效果?
+	//深度偏移
+	//glDisable(GL_POLYGON_OFFSET_FILL);	//开启面的深度偏移
+	glBegin(GL_LINES);
+	//x
+	glColor3f(1.0, 0, 0);
+	glVertex3f(3, 0, 0);
+	glVertex3f(0, 0, 0);
+	//y
+	glColor3f(0, 1.0, 0);
+	glVertex3f(0, 3, 0);
+	glVertex3f(0, 0, 0);
+	//z
+	glColor3f(0, 0, 1.0);
+	glVertex3f(0, 0, 3);
+	glVertex3f(0, 0, 0);
+
+
+	glEnd();
+	/*
+	//深度偏移
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.0f, 0.0f);
+	*/
+
+	glColor3f(0.5, 0.5, 0.5);
+	glBegin(GL_LINES);
+	//z轴
+	glVertex3f(0, 0, 10);
+	glVertex3f(0, 0, -10);
+	for (int i = -10; i <= 10; i++)
+	{
+		glVertex3f(10, i, 0);
+		glVertex3f(-10, i, 0);
+	}
+	for (int i = -10; i <= 10; i++)
+	{
+		glVertex3f(i, 10, 0);
+		glVertex3f(i, -10, 0);
+	}
+	glEnd();
+	glEnable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+}
+
+
+
 
 CSceneEditorView::CSceneEditorView()
 {
@@ -111,6 +200,9 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO:  在此处为本机数据添加绘制代码
+	/////////////////////////////////////////////////////////////////////
+	//非阴影代码
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (m_PolygonMode == LINE)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -121,10 +213,10 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 	glLoadIdentity();
 	//////////////////////////////////	
 	//平行投影
-	glTranslatef(m_move_x, m_move_y, 0);
 	glRotatef(m_rotate_x, 1.0f, 0.0f, 0.0f);
 	glRotatef(m_rotate_y, 0.0f, 1.0f, 0.0f);
 	glRotatef(m_rotate_z, 0.0f, 0.0f, 1.0f);
+	glTranslatef(m_move_x, m_move_y, 0);
 	//透视投影
 	//////////////////////////////////////////////
 	//gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
@@ -147,6 +239,168 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 		pFrame->update_light_tree(pDoc->m_light_list);
 		m_need_update_light_tree = false;
 	}
+	//m_selected_is_valid = false;
+	
+	/////////////////////////////////////////////////////////////////////
+	//阴影代码
+	/*
+
+	//First pass - from light's point of view
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(lightProjectionMatrix);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(lightViewMatrix);
+
+	//Use viewport the same size as the shadow map
+	glViewport(0, 0, shadowMapSize, shadowMapSize);
+
+	//Draw back faces into the shadow map
+	glCullFace(GL_FRONT);
+
+	//Disable color writes, and use flat shading for speed
+	glShadeModel(GL_FLAT);
+	glColorMask(0, 0, 0, 0);
+
+	//Draw the scene
+	RenderScene();
+
+	//Read the depth buffer into the shadow map texture
+	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, shadowMapSize, shadowMapSize);
+
+	//restore states
+	glCullFace(GL_BACK);
+	glShadeModel(GL_SMOOTH);
+	glColorMask(1, 1, 1, 1);
+
+
+
+
+	//2nd pass - Draw from camera's point of view
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(cameraProjectionMatrix);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(cameraViewMatrix);
+
+	glViewport(0, 0, windowWidth, windowHeight);
+
+	//Use dim light to represent shadowed areas
+	glLightfv(GL_LIGHT1, GL_POSITION, VECTOR4D(lightPosition));
+	glLightfv(GL_LIGHT1, GL_AMBIENT, white*0.2f);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, white*0.2f);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_LIGHTING);
+
+	RenderScene();
+
+
+
+	//3rd pass
+	//Draw with bright light
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+
+	//Calculate texture matrix for projection
+	//This matrix takes us from eye space to the light's clip space
+	//It is postmultiplied by the inverse of the current view matrix when specifying texgen
+	static MATRIX4X4 biasMatrix(0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f);	//bias from [-1, 1] to [0, 1]
+	MATRIX4X4 textureMatrix = biasMatrix*lightProjectionMatrix*lightViewMatrix;
+
+	//Set up texture coordinate generation.
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix.GetRow(0));
+	glEnable(GL_TEXTURE_GEN_S);
+
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_T, GL_EYE_PLANE, textureMatrix.GetRow(1));
+	glEnable(GL_TEXTURE_GEN_T);
+
+	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_R, GL_EYE_PLANE, textureMatrix.GetRow(2));
+	glEnable(GL_TEXTURE_GEN_R);
+
+	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	glTexGenfv(GL_Q, GL_EYE_PLANE, textureMatrix.GetRow(3));
+	glEnable(GL_TEXTURE_GEN_Q);
+
+	//Bind & enable shadow map texture
+
+	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+	glEnable(GL_TEXTURE_2D);
+
+	//Enable shadow comparison
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE);
+
+	//Shadow comparison should be true (ie not in shadow) if r<=texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+
+	//Shadow comparison should generate an INTENSITY result
+	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY);
+
+	//Set alpha test to discard false comparisons
+	glAlphaFunc(GL_GEQUAL, 0.99f);
+	glEnable(GL_ALPHA_TEST);
+
+	RenderScene();
+
+	//Disable textures and texgen
+	glDisable(GL_TEXTURE_2D);
+
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_GEN_R);
+	glDisable(GL_TEXTURE_GEN_Q);
+
+	//Restore other states
+	glDisable(GL_LIGHTING);
+	glDisable(GL_ALPHA_TEST);
+
+	//Set matrices for ortho
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	//reset matrices
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glFinish();
+
+	SwapBuffers(m_pDC->GetSafeHdc());
+
+
+	if (m_need_update_obj_tree == true)
+	{
+		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+		pFrame->update_obj_tree(pDoc->m_obj_list);
+		m_need_update_obj_tree = false;
+	}
+	if (m_need_update_light_tree == true)
+	{
+		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+		pFrame->update_light_tree(pDoc->m_light_list);
+		m_need_update_light_tree = false;
+	}
+	*/
+	/////////////////////////////////////////////////////////////////////
+
 }
 
 void CSceneEditorView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -230,6 +484,9 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	CView::OnSize(nType, cx, cy);
 
 	// TODO:  在此处添加消息处理程序代码
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//非阴影
+	
 	if (0 >= cx || 0 >= cy)
 		return;
 
@@ -246,13 +503,24 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	//glOrtho(-cx / 100, cx / 100, -cy / 100, cy / 100, -100, 100);
 	/////////////////////////////////////////////////////////////////
 	//透视投影
-	/*
-	GLdouble aspect_ratio; // width/height ratio
-	aspect_ratio = (GLdouble)cx / (GLdouble)cy;
-	gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
-	*/
+	//GLdouble aspect_ratio; // width/height ratio
+	//aspect_ratio = (GLdouble)cx / (GLdouble)cy;
+	//gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
 
 	glMatrixMode(GL_MODELVIEW);
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//阴影代码
+	/*
+	windowWidth = cx, windowHeight = cy;
+
+	//Update the camera's projection matrix
+	glPushMatrix();
+	glLoadIdentity();
+	gluPerspective(45.0f, (float)windowWidth / windowHeight, 1.0f, 100.0f);
+	glGetFloatv(GL_MODELVIEW_MATRIX, cameraProjectionMatrix);
+	glPopMatrix();
+	*/
 }
 
 
@@ -292,6 +560,8 @@ BOOL CSceneEditorView::InitializeOpenGL()
 		//	MessageBox("Error making RC Current");
 		return FALSE;
 	}
+	/////////////////////////////////////////////////////////////////////
+	//非阴影
 	//Specify Black as the clear color
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	//Specify the back of the buffer as clear depth
@@ -301,6 +571,74 @@ BOOL CSceneEditorView::InitializeOpenGL()
 	glEnable(GL_NORMALIZE);
 	//自动计算法向量
 	//glEnable(GL_AUTO_NORMAL);
+	
+	/////////////////////////////////////////////////////////////////////
+	//阴影
+	/*
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	//Shading states
+	glShadeModel(GL_SMOOTH);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	//Depth states
+	glClearDepth(1.0f);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE);
+
+	//We use glScale when drawing the scene
+	glEnable(GL_NORMALIZE);
+
+	//Create the shadow map texture
+	glGenTextures(1, &shadowMapTexture);
+	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+	glTexImage2D(	GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowMapSize, shadowMapSize, 0,
+	GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	//Use the color as the ambient and diffuse material
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	//White specular material color, shininess 16
+	glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+	glMaterialf(GL_FRONT, GL_SHININESS, 16.0f);
+
+	//Calculate & save matrices
+	glPushMatrix();
+
+	glLoadIdentity();
+	gluPerspective(45.0f, (float)windowWidth/windowHeight, 1.0f, 100.0f);
+	glGetFloatv(GL_MODELVIEW_MATRIX, cameraProjectionMatrix);
+
+	glLoadIdentity();
+	gluLookAt(cameraPosition.x, cameraPosition.y, cameraPosition.z,
+	0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f);
+	glGetFloatv(GL_MODELVIEW_MATRIX, cameraViewMatrix);
+
+	glLoadIdentity();
+	gluPerspective(45.0f, 1.0f, 2.0f, 8.0f);
+	glGetFloatv(GL_MODELVIEW_MATRIX, lightProjectionMatrix);
+
+	glLoadIdentity();
+	gluLookAt(	lightPosition.x, lightPosition.y, lightPosition.z,
+	0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f);
+	glGetFloatv(GL_MODELVIEW_MATRIX, lightViewMatrix);
+
+	glPopMatrix();
+	*/
+	/////////////////////////////////////////////////////////////////////
+
 	return TRUE;
 
 }
@@ -347,10 +685,20 @@ void CSceneEditorView::RenderScene()
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
-
+	glPushMatrix();
+	//////////////////////////////////////////////////////
+	//阴影
+	/*
+	glRotatef(-120, 1, 1, 1);
+	glRotatef(m_rotate_x, 1.0f, 1.0f, 1.0f);
+	glRotatef(m_rotate_y, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_rotate_z, 0.0f, 0.0f, 1.0f);
+	glTranslatef(m_move_x, m_move_y, 0);
+	*/
+	
+	//////////////////////////////////////////////////////
+	grid();
 	auto v = pDoc->m_obj_list;
-
 	for (auto i = v.begin(); i != v.end(); i++)
 	{
 		(*i)->draw();
@@ -359,74 +707,23 @@ void CSceneEditorView::RenderScene()
 	MarkSelected();
 
 	glFlush();
+	glPopMatrix();
 }
 void CSceneEditorView::MarkSelected()
 {
-	draw_selected_cube(0, 0, 0, 0, 0, 0);
 	if (m_selected_is_valid == true)
 	{
 		if (m_cur_type == DRAW_OBJ)
 		{
-
+			m_cur_obj->m_obj->mark();
 		}
 		else if (m_cur_type == DRAW_LIGHT)
 		{
-
+			m_cur_light->mark();
 		}
 	}
 }
 
-void CSceneEditorView::draw_selected_cube(GLfloat center_x, GLfloat center_y, GLfloat center_z, GLfloat length, GLfloat width, GLfloat height)
-{
-	glPushMatrix();
-	glDisable(GL_LIGHTING);
-	glColor3f(0, 1, 1);	
-	
-	// 前面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
-	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
-	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的右上
-	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的左上
-	glEnd();
-	// 后面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的右下
-	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
-	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
-	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的左下
-	glEnd();
-	// 顶面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
-	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的左下
-	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的右下
-	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
-	glEnd();
-	// 底面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的右上
-	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的左上
-	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
-	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
-	glEnd();
-	// 右面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(0.5f, -0.5f, -0.5f);	// 纹理和四边形的右下
-	glVertex3f(0.5f, 0.5f, -0.5f);	// 纹理和四边形的右上
-	glVertex3f(0.5f, 0.5f, 0.5f);	// 纹理和四边形的左上
-	glVertex3f(0.5f, -0.5f, 0.5f);	// 纹理和四边形的左下
-	glEnd();
-	// 左面
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(-0.5f, -0.5f, -0.5f);	// 纹理和四边形的左下
-	glVertex3f(-0.5f, -0.5f, 0.5f);	// 纹理和四边形的右下
-	glVertex3f(-0.5f, 0.5f, 0.5f);	// 纹理和四边形的右上
-	glVertex3f(-0.5f, 0.5f, -0.5f);	// 纹理和四边形的左上
-	glEnd();
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-}
 void CSceneEditorView::RenderLight()
 {
 	CSceneEditorDoc* pDoc = GetDocument();
@@ -709,6 +1006,8 @@ CLight* CSceneEditorView::add_light()
 * {
 * SaveHwndToBmpFile(hWnd, _T("F://12.bmp"));
 * }
+* this function can not work in dwm (maybe), causing black bmp file. 
+* PrintWindow << suspector
 */
 //////////////////////////////////////////////////////////////////////
 void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
@@ -784,7 +1083,6 @@ void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
 void CSceneEditorView::OnCmdCapture()
 {
 	// TODO:  在此添加命令处理程序代码
-	// 调用方法  
 	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
 		NULL,
 		NULL,
@@ -856,4 +1154,31 @@ void CSceneEditorView::OnCmdDelete()
 		m_need_update_light_tree = true;
 	}
 	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnCmdExportObj()
+{
+	// TODO:  在此添加命令处理程序代码
+	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		NULL,
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("obj Files (*.obj)|*.obj|"),
+		NULL);
+	if (dlg.DoModal() == IDOK)
+	{
+		CString file_name = dlg.GetPathName();
+		m_cur_obj->exportobj(file_name);
+	}
+}
+
+
+void CSceneEditorView::OnUpdateCmdExportObj(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	if (m_selected_is_valid == true && m_cur_type == DRAW_OBJ && m_obj_type == OBJ_FILE)
+		pCmdUI->Enable(TRUE);
+	else
+		pCmdUI->Enable(FALSE);
 }

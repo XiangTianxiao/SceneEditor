@@ -5,9 +5,14 @@
 #include <cmath>
 
 #include <windows.h>
+
 #include <gl\GL.h>
 #include <gl\GLU.h>
 #include <gl\glut.h>
+
+#include <fstream>
+using namespace std;
+
 class CObj
 {
 public:
@@ -25,8 +30,11 @@ public:
 	CObj();
 	~CObj();
 
-	virtual void draw() = 0;
+	virtual void draw(){};// = 0;
+	virtual void mark(){};// = 0;
+	friend ostream& operator<<(ostream& out, CObj obj);
 protected:
 	void SetMaterial();
 	void Transform();
 };
+

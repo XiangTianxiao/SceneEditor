@@ -8,9 +8,13 @@ class CSphere :
 public:
 	CSphere();
 	~CSphere();
-
+	//°ë¾¶
+	GLfloat m_r;
 	GLint m_slices;
 	GLint m_stacks;
 	void draw();
+	void mark();
+	friend ostream& operator<<(ostream& out, CSphere sphere);
+
 };
 

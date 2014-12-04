@@ -66,3 +66,79 @@ void CCylinder::DrawCircleArea(float cx, float cy, float cz, float r, int num_se
 	glVertex4fv(vertex);
 	glEnd();
 }
+
+void CCylinder::mark()
+{
+	glPushMatrix();
+	glTranslatef(0, 0, m_height / 2);
+	Transform();
+	GLfloat max_r = max(m_baseRadius, m_topRadius);
+	glScalef(max_r, max_r, 1);
+	glScalef(2, 2, m_height);
+	glScalef(1.1, 1.1, 1.1);
+	glDisable(GL_LIGHTING);
+	glColor3f(0, 1, 1);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}
+
+ostream& operator<<(ostream& out, CCylinder cylinder)
+{
+	out << "## cylinder" << endl;
+	out << (CObj)cylinder;
+
+	//ÏÂµ×°ë¾¶
+	out << "baseRadius " << cylinder.m_baseRadius << endl;
+	//ÉÏµ×°ë¾¶
+	out << "topRadius " << cylinder.m_topRadius << endl;
+	//¸ß¶È
+	out << "height " << cylinder.m_height << endl;
+	//Äã¶®µÃ
+	out << "slices " << cylinder.m_slices << endl;
+	//Äã¶®µÃ
+	out << "stacks " << cylinder.m_stacks << endl;
+
+	out << endl;
+	return out;
+}

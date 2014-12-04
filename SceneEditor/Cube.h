@@ -3,7 +3,6 @@
 
 #pragma once
 #include "Obj.h"
-
 class CCube :
 	public CObj
 {
@@ -11,4 +10,6 @@ public:
 	CCube();
 	~CCube();
 	void draw();
+	void mark();
+	friend ostream& operator<<(ostream& out, CCube cube);
 };

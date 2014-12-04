@@ -23,6 +23,8 @@ public:
 	GLint m_stacks;
 
 	void draw();
+	void mark();
+	friend ostream& operator<<(ostream& out, CCylinder cylinder);
 private:
 	void DrawCircleArea(float cx, float cy, float cz, float r, int num_segments);
 };

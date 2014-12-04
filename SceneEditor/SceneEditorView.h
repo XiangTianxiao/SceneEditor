@@ -39,7 +39,6 @@ public:
 	void MarkSelected();
 	void RenderLight();
 
-	void draw_selected_cube(GLfloat center_x, GLfloat center_y, GLfloat center_z, GLfloat length,GLfloat width,GLfloat height);
 	//视图
 	bool m_lbutton_down;
 	/*透视投影
@@ -141,6 +140,8 @@ public:
 	afx_msg void OnCmdCapture();
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnCmdDelete();
+	afx_msg void OnCmdExportObj();
+	afx_msg void OnUpdateCmdExportObj(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

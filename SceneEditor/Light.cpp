@@ -42,7 +42,15 @@ void CLight::draw_property(CMFCPropertyGridCtrl* PropList)
 	PropList->EnableDescriptionArea();
 	PropList->SetVSDotNetLook();
 
+	
+	
+	
 	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("光源"));
+
+
+	CMFCPropertyGridProperty* pProp2 = new CMFCPropertyGridProperty(_T("开启灯光"), (_variant_t)m_on, _T("指是否开启灯光"));
+	pGroup1->AddSubItem(pProp2);
+
 
 	CMFCPropertyGridProperty* pLocation = new CMFCPropertyGridProperty(_T("对象位置"), 0, TRUE);
 	CMFCPropertyGridProperty* p = new CMFCPropertyGridProperty(_T("X"), (_variant_t)m_light_pos[0], _T("世界坐标中X的位置"));
@@ -69,6 +77,11 @@ void CLight::change_value(CMFCPropertyGridProperty* pProp)
 	
 	CString name = pProp->GetName();  //被改变的参数名
 	COleVariant t = pProp->GetValue(); //改变之后的值
+	if (name == "开启灯光")
+	{
+		m_on = (t.boolVal != 0);
+		return;
+	}
 	if (name == "X")
 	{
 		m_light_pos[0] = GLfloat(t.fltVal);
@@ -94,3 +107,55 @@ void CLight::change_value(CMFCPropertyGridProperty* pProp)
 	}
 }
 
+void CLight::mark()
+{
+	glPushMatrix();
+	glTranslatef(m_light_pos[0], m_light_pos[1], m_light_pos[2]);
+	glScalef(0.5, 0.5, 0.5);
+
+	glDisable(GL_LIGHTING);
+	glColor3f(1, 0, 0);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}

@@ -23,7 +23,7 @@ public:
 	void OnChangeVisualStyle();
 
 // Ьиад
-protected:
+public:
 
 	CViewTree m_wndFileView;
 	CImageList m_FileViewImages;

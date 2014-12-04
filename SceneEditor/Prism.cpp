@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Prism.h"
-
+#include <algorithm>
+using namespace std;
 CPrism::CPrism()
 {
 	m_edge = 3;
@@ -70,4 +71,78 @@ void CPrism::DrawSide()
 		glVertex4fv(vertex);
 	}
 	glEnd();
+}
+
+void CPrism::mark()
+{
+	glPushMatrix();
+	glTranslatef(0, 0, m_height / 2);
+	Transform();
+	GLfloat max_r = max(m_baseRadius, m_topRadius);
+	glScalef(max_r, max_r, 1);
+	glScalef(2, 2, m_height);
+	glScalef(1.1, 1.1, 1.1);
+	glDisable(GL_LIGHTING);
+	glColor3f(0, 1, 1);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}
+
+ostream& operator<<(ostream& out, CPrism prism)
+{
+	out << "## prism" << endl;
+	out << (CObj)prism;
+
+	//边数
+	out << "edge " << prism.m_edge << endl;
+	//下底半径
+	out << "baseRadius " << prism.m_baseRadius << endl;
+	//上底半径
+	out << "topRadius " << prism.m_topRadius << endl;
+	//高度
+	out << "height " << prism.m_height << endl;
+
+	out << endl;
+	return out;
 }

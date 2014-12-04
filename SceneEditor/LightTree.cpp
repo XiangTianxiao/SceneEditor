@@ -51,6 +51,7 @@ BOOL CLightTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
 void CLightTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
+	
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO:  在此添加控件通知处理程序代码
 	CString obj_name = GetItemText(pNMTreeView->itemNew.hItem);
@@ -58,5 +59,11 @@ void CLightTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 	pFrame->draw_property(obj_name, DRAW_LIGHT);
 	pFrame->m_obj_or_light_name = obj_name;
 	pFrame->m_draw_type = DRAW_LIGHT;
+	CSceneEditorView* pView = (CSceneEditorView*)pFrame->GetActiveView();
+	/*取消另外的选中
+	HTREEITEM hItem = pFrame->m_wndFileView.m_wndFileView.GetSelectedItem();
+	pFrame->m_wndFileView.m_wndFileView.SetItemState(hItem, 0, TVIS_SELECTED);
+	*/
+	pView->Invalidate(FALSE);
 	*pResult = 0;
 }

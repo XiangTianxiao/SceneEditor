@@ -3,6 +3,7 @@
 //http://blog.csdn.net/wangjiannuaa/article/details/6758173
 #include "stdafx.h"
 #include "ObjFile.h"
+#include "float3.h"
 
 #undef max
 #undef min
@@ -19,6 +20,7 @@ using namespace std;
 
 CObjFile::CObjFile()
 {
+	m_list = 0;
 }
 
 
@@ -29,30 +31,66 @@ CObjFile::~CObjFile()
 void CObjFile::draw()
 {
 	SetMaterial();
-
 	glPushMatrix();
 	Transform();
-
-	glBegin(GL_TRIANGLES);
-	auto v = faces;
-	for (auto i = v.begin(); i != v.end(); i++)
+	//重新绘制太慢了，因此采用list的方式
+	if (m_list == 0)
 	{
-		glTexCoord2f(vt[i->vt[0] - 1].x, vt[i->vt[0] - 1].y);
-		glVertex3f(verts[i->v[0] - 1].x, verts[i->v[0] - 1].y, verts[i->v[0] - 1].z);
+		m_list = glGenLists(1);
+		glNewList(m_list, GL_COMPILE);
+		{
 
-		glTexCoord2f(vt[i->vt[1] - 1].x, vt[i->vt[1] - 1].y);
-		glVertex3f(verts[i->v[1] - 1].x, verts[i->v[1] - 1].y, verts[i->v[1] - 1].z);
+			glBegin(GL_TRIANGLES);
+			auto v = faces;
+			for (auto i = v.begin(); i != v.end(); i++)
+			{
+				//计算法向量
+				float3 a(verts[i->v[0] - 1].x, verts[i->v[0] - 1].y, verts[i->v[0] - 1].z);
+				float3 b(verts[i->v[1] - 1].x, verts[i->v[1] - 1].y, verts[i->v[1] - 1].z);
+				float3 c(verts[i->v[2] - 1].x, verts[i->v[2] - 1].y, verts[i->v[2] - 1].z);
+				float3 cross_product((c - b)*(b - a));
+				glNormal3f(cross_product.x, cross_product.y, cross_product.z);
+				//绘制三角形
+				glTexCoord2f(vt[i->vt[0] - 1].x, vt[i->vt[0] - 1].y);
+				glVertex3f(verts[i->v[0] - 1].x, verts[i->v[0] - 1].y, verts[i->v[0] - 1].z);
 
-		glTexCoord2f(vt[i->vt[2] - 1].x, vt[i->vt[2] - 1].y);
-		glVertex3f(verts[i->v[2] - 1].x, verts[i->v[2] - 1].y, verts[i->v[2] - 1].z);
+				glTexCoord2f(vt[i->vt[1] - 1].x, vt[i->vt[1] - 1].y);
+				glVertex3f(verts[i->v[1] - 1].x, verts[i->v[1] - 1].y, verts[i->v[1] - 1].z);
+
+				glTexCoord2f(vt[i->vt[2] - 1].x, vt[i->vt[2] - 1].y);
+				glVertex3f(verts[i->v[2] - 1].x, verts[i->v[2] - 1].y, verts[i->v[2] - 1].z);
+			}
+			glEnd();
+		}
+		glEndList();
 	}
-	glEnd();
+	glCallList(m_list);
 	glPopMatrix();
 }
 
 
 void CObjFile::loadObj(string filename)
 {
+	//获取文件名
+	int win;
+	int nix;
+	win = filename.rfind('\\');
+	nix = filename.rfind('/');
+
+	if (win == string::npos && nix == string::npos)
+	{
+		m_filename = filename;
+	}
+	else if (win != string::npos)
+	{
+		m_filename = filename.substr(win + 1);
+	}
+	else //if (nix!=string::npos)或者两者都!=string::npos，则采用nix的
+	{
+		m_filename = filename.substr(nix + 1);
+	}
+	//获取文件名 END
+
 	std::ifstream in(filename.c_str());
 
 	if (!in.good())
@@ -205,4 +243,102 @@ void CObjFile::loadObj(string filename)
 		<< "obj bounding sphere center:" << mesh.bounding_sphere_c.x << "," << mesh.bounding_sphere_c.y << "," << mesh.bounding_sphere_c.z << endl
 		<< "obj bounding sphere radius:" << mesh.bounding_sphere_r << endl;
 */		
+}
+
+void CObjFile::mark()
+{
+
+	glPushMatrix();
+	glTranslatef(bounding_sphere_c.x / 2, bounding_sphere_c.y / 2, bounding_sphere_c.z / 2);
+	Transform();
+
+	glScalef(2, 2, 2);
+	glScalef(bounding_box[1].x, bounding_box[1].y, bounding_box[1].z);
+	glScalef(1.1, 1.1, 1.1);
+	glDisable(GL_LIGHTING);
+	glColor3f(0, 1, 1);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, -0.5, 0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, 0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, 0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glVertex3f(-0.5, 0.5, 0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
+
+	glVertex3f(0.5, 0.5, 0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+
+	glVertex3f(-0.5, -0.5, 0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
+
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+
+	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}
+
+void CObjFile::exportobj(string filename)
+{
+	AfxMessageBox(_T("没有写!"));
+	ofstream file;
+	file.open(filename);
+	if (!file)
+		throw "void CObjFile::exportobj(string filename),无法打开文件进行写入!";
+	for (auto i = verts.begin(); i != verts.end(); i++)
+	{
+		file << "v " << i->x << " " << i->y << " " << i->z << endl;
+	}
+	file << endl;
+	for (auto i = vt.begin(); i != vt.end(); i++)
+	{
+		file << "vt " << i->x << " " << i->y << endl;
+	}
+	file << endl;
+	for (auto i = faces.begin(); i != faces.end(); i++)
+	{
+		file << "f "
+			<< i->v[0] << "/" << i->vt[0] << " "
+			<< i->v[1] << "/" << i->vt[1] << " "
+			<< i->v[2] << "/" << i->vt[2] << endl;
+	}
+	file<<endl;
+}
+
+ostream& operator<<(ostream& out, CObjFile objfile)
+{
+	out << "## objfile" << endl;
+	out << (CObj)objfile;
+
+	out << "filename " << objfile.m_filename << endl;
+
+	out << endl;
+
+	objfile.exportobj(objfile.m_filename);
+
+	return out;
 }

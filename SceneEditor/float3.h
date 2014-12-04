@@ -22,6 +22,11 @@ public:
 	{
 		return float3(f3.x*m, f3.y*m, f3.z*m);
 	}
+	//²æ³Ë
+	float3 operator*(float3 b)
+	{
+		return float3(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x);
+	}
 
 	float3 operator=(float3);
 

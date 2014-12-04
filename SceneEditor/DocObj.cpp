@@ -114,6 +114,8 @@ void CDocObj::draw()
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glEnable(GL_TEXTURE_2D);
 	}
+	if (m_whether_texture == false)
+		glDisable(GL_TEXTURE_2D);
 	m_obj->draw();
 	glDisable(GL_TEXTURE_2D);
 }
@@ -180,7 +182,7 @@ void CDocObj::draw_property_obj(CMFCPropertyGridCtrl* PropList)
 	pColorProp->EnableAutomaticButton(_T("默认"), ::GetSysColor(COLOR_3DFACE));
 	pGroup1->AddSubItem(pColorProp);
 
-	CMFCPropertyGridProperty* pLightness = new CMFCPropertyGridProperty(_T("亮度"), m_obj->m_shininess, _T("指物体的亮度"));
+	CMFCPropertyGridProperty* pLightness = new CMFCPropertyGridProperty(_T("物体亮度"), m_obj->m_shininess, _T("指物体的亮度"));
 
 	pGroup1->AddSubItem(pLightness);
 
@@ -537,4 +539,24 @@ unsigned char* CDocObj::LoadBitmapFile(const char *filename, BITMAPINFOHEADER *b
 	// 关闭bitmap图像文件
 	fclose(filePtr);
 	return bitmapImage;
+}
+
+void CDocObj::exportobj(CString file_name)
+{
+	if (m_type != OBJ_FILE)
+		throw CString("void CDocObj::exportobj(CString filename) not obj file");
+
+	//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
+	int n = file_name.GetLength();    // n = 14, len = 18
+	//获取宽字节字符的大小，大小是按字节计算的
+	int len = WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), NULL, 0, NULL, NULL);
+	//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
+	char * pFileName = new char[len + 1];  //以字节为单位
+	//宽字节编码转换成多字节编码
+	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), pFileName, len, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
+	pFileName[len + 1] = 0;  //多字节字符以'/0'结束
+
+	((CObjFile*)m_obj)->exportobj(pFileName);
+
 }

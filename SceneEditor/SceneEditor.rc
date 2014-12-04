@@ -201,6 +201,7 @@ BEGIN
         MENUITEM "删除灯光",                        ID_CMD_DELETE_LIGHT
         MENUITEM SEPARATOR
         MENUITEM "截图",                          ID_CMD_CAPTURE
+        MENUITEM "导出obj",                       ID_CMD_EXPORT_OBJ
     END
     POPUP "模式"
     BEGIN
@@ -238,16 +239,12 @@ IDR_POPUP_EXPLORER MENU
 BEGIN
     POPUP "资源管理器"
     BEGIN
-        MENUITEM "打开(&O)",                      ID_OPEN
-        MENUITEM "打开方式(&W)....",                ID_OPEN_WITH
-        MENUITEM SEPARATOR
-        MENUITEM "编译(&C)",                      ID_DUMMY_COMPILE
-        MENUITEM SEPARATOR
-        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
-        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
-        MENUITEM "移除(&R)",                      ID_EDIT_CLEAR
-        MENUITEM SEPARATOR
-        MENUITEM "属性(&P)...",                   ID_PROPERTIES
+        MENUITEM "添加物体",                        ID_CMD_ADD
+        MENUITEM "删除物体",                        ID_CMD_DELETE
+        MENUITEM "重名名物体",                       ID_CMD_RENAME
+        MENUITEM "添加灯光",                        ID_CMD_ADD_LIGHT
+        MENUITEM "删除灯光",                        ID_CMD_DELETE_LIGHT
+        MENUITEM "导出obj",                       ID_CMD_EXPORT_OBJ
     END
 END
 

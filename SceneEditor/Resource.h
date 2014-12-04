@@ -90,13 +90,21 @@
 #define ID_CMD_CAPTURE                  32789
 #define ID_32790                        32790
 #define ID_CMD_DELETE_LIGHT             32791
+#define ID_32792                        32792
+#define ID_CMD_EXPORT_OBJ               32793
+#define ID_32794                        32794
+#define ID_32795                        32795
+#define ID_32796                        32796
+#define ID_32797                        32797
+#define ID_32798                        32798
+#define ID_32799                        32799
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32792
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

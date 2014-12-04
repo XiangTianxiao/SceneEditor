@@ -50,5 +50,11 @@ void CViewTree::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
 	pFrame->draw_property(obj_name, DRAW_OBJ);
 	pFrame->m_obj_or_light_name = obj_name;
 	pFrame->m_draw_type = DRAW_OBJ;
+	CSceneEditorView* pView = (CSceneEditorView*)pFrame->GetActiveView();
+	/*取消另外的选中
+	HTREEITEM hItem = pFrame->m_wndClassView.m_wndLightView.GetSelectedItem();
+	pFrame->m_wndClassView.m_wndLightView.SetItemState(hItem, 0, TVIS_SELECTED);
+	*/
+	pView->Invalidate(FALSE);
 	*pResult = 0;
 }

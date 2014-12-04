@@ -56,3 +56,18 @@ void CObj::Transform()
 	glRotatef(m_angle_y, 0, 1, 0);
 	glRotatef(m_angle_z, 0, 0, 1);
 }
+
+ostream& operator<<(ostream& out, CObj obj)
+{
+	//位置
+	out << "position " << obj.m_x << " " << obj.m_y << " " << obj.m_z << endl;
+	//长宽高
+	out << "size " << obj.m_l << " " << obj.m_w << " " << obj.m_h << endl;
+	//角度
+	out << "angle " << obj.m_angle_x << " " << obj.m_angle_y << " " << obj.m_angle_z << endl;
+	out << "ambient " << obj.m_ambient[0] << " " << obj.m_ambient[1] << " " << obj.m_ambient[2] << " " << obj.m_ambient[3] << endl;
+	out << "diffuse " << obj.m_diffuse[0] << " " << obj.m_diffuse[1] << " " << obj.m_diffuse[2] << " " << obj.m_diffuse[3] << endl;
+	out << "specular " << obj.m_specular[0] << " " << obj.m_specular[1] << " " << obj.m_specular[2] << " " << obj.m_specular[3] << endl;
+	out << "shininess " << obj.m_shininess << endl;
+	return out;
+}

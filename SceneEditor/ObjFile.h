@@ -23,8 +23,11 @@ public:
 	~CObjFile();
 
 	void draw();
+	void mark();
+	friend ostream& operator<<(ostream& out, CObjFile objfile);
 	void loadObj(string filename);
-public:
+	void exportobj(string filename);
+private:
 	vector<float3> verts;
 	vector<float2> vt;
 	vector<TriangleFace> faces;
@@ -33,5 +36,7 @@ public:
 	//模型的包围球参数
 	float3 bounding_sphere_c;
 	float bounding_sphere_r;
+	GLuint m_list;
+	string m_filename;
 };
 

@@ -16,6 +16,9 @@ public:
 	GLfloat m_height;
 
 	void draw();
+	void mark();
+	friend ostream& operator<<(ostream& out, CPrism prism);
+
 private:
 	void DrawBottom(GLfloat h, GLfloat r);
 	void DrawSide();
