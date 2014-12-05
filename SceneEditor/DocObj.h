@@ -1,12 +1,12 @@
 #pragma once
 
-#include "obj\Obj.h"
+#include "cobj\Obj.h"
 
-#include "obj\Cylinder.h"
-#include "obj\Cube.h"
-#include "obj\Prism.h"
-#include "obj\Sphere.h"
-#include "obj\ObjFile.h"
+#include "cobj\Cylinder.h"
+#include "cobj\Cube.h"
+#include "cobj\Prism.h"
+#include "cobj\Sphere.h"
+#include "cobj\ObjFile.h"
 
 class CDocObj
 {

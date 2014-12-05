@@ -66,28 +66,28 @@
     <ClInclude Include="LightTree.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="obj\Cube.h">
+    <ClInclude Include="cobj\Cube.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\Cylinder.h">
+    <ClInclude Include="cobj\Cylinder.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\float2.h">
+    <ClInclude Include="cobj\float2.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\float3.h">
+    <ClInclude Include="cobj\float3.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\Obj.h">
+    <ClInclude Include="cobj\Obj.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\ObjFile.h">
+    <ClInclude Include="cobj\ObjFile.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\Prism.h">
+    <ClInclude Include="cobj\Prism.h">
       <Filter>CObj</Filter>
     </ClInclude>
-    <ClInclude Include="obj\Sphere.h">
+    <ClInclude Include="cobj\Sphere.h">
       <Filter>CObj</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,28 +131,28 @@
     <ClCompile Include="LightTree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="obj\Cube.cpp">
+    <ClCompile Include="cobj\Cube.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\Cylinder.cpp">
+    <ClCompile Include="cobj\Cylinder.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\float2.cpp">
+    <ClCompile Include="cobj\float2.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\float3.cpp">
+    <ClCompile Include="cobj\float3.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\Obj.cpp">
+    <ClCompile Include="cobj\Obj.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\ObjFile.cpp">
+    <ClCompile Include="cobj\ObjFile.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\Prism.cpp">
+    <ClCompile Include="cobj\Prism.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
-    <ClCompile Include="obj\Sphere.cpp">
+    <ClCompile Include="cobj\Sphere.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
   </ItemGroup>

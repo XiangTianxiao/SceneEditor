@@ -102,20 +102,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassView.h" />
+    <ClInclude Include="cobj\Cube.h" />
+    <ClInclude Include="cobj\Cylinder.h" />
+    <ClInclude Include="cobj\float2.h" />
+    <ClInclude Include="cobj\float3.h" />
+    <ClInclude Include="cobj\Obj.h" />
+    <ClInclude Include="cobj\ObjFile.h" />
+    <ClInclude Include="cobj\Prism.h" />
+    <ClInclude Include="cobj\Sphere.h" />
     <ClInclude Include="DlgAddObj.h" />
     <ClInclude Include="DocObj.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightTree.h" />
     <ClInclude Include="MainFrm.h" />
-    <ClInclude Include="obj\Cube.h" />
-    <ClInclude Include="obj\Cylinder.h" />
-    <ClInclude Include="obj\float2.h" />
-    <ClInclude Include="obj\float3.h" />
-    <ClInclude Include="obj\Obj.h" />
-    <ClInclude Include="obj\ObjFile.h" />
-    <ClInclude Include="obj\Prism.h" />
-    <ClInclude Include="obj\Sphere.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SceneEditor.h" />
@@ -127,20 +127,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClassView.cpp" />
+    <ClCompile Include="cobj\Cube.cpp" />
+    <ClCompile Include="cobj\Cylinder.cpp" />
+    <ClCompile Include="cobj\float2.cpp" />
+    <ClCompile Include="cobj\float3.cpp" />
+    <ClCompile Include="cobj\Obj.cpp" />
+    <ClCompile Include="cobj\ObjFile.cpp" />
+    <ClCompile Include="cobj\Prism.cpp" />
+    <ClCompile Include="cobj\Sphere.cpp" />
     <ClCompile Include="DlgAddObj.cpp" />
     <ClCompile Include="DocObj.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightTree.cpp" />
     <ClCompile Include="MainFrm.cpp" />
-    <ClCompile Include="obj\Cube.cpp" />
-    <ClCompile Include="obj\Cylinder.cpp" />
-    <ClCompile Include="obj\float2.cpp" />
-    <ClCompile Include="obj\float3.cpp" />
-    <ClCompile Include="obj\Obj.cpp" />
-    <ClCompile Include="obj\ObjFile.cpp" />
-    <ClCompile Include="obj\Prism.cpp" />
-    <ClCompile Include="obj\Sphere.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="SceneEditor.cpp" />
     <ClCompile Include="SceneEditorDoc.cpp" />
