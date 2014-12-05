@@ -28,7 +28,10 @@ public:
 	CDocObj* add_obj(OBJ_TYPE type, CString name);
 	CDocObj* add_obj(CString name, CString file_name);
 	CLight* add_light();
-	CString case_name_overlap(CString name, int num);
+	CString case_name_overlap(CString name, int num = 0);
+
+	void save_file(string filename);
+	void open_file(string filename);
 
 // 重写
 public:
@@ -57,4 +60,9 @@ protected:
 	// 用于为搜索处理程序设置搜索内容的 Helper 函数
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	afx_msg void OnFileMyOpen();
+	afx_msg void OnFileMySave();
 };
+
+string cstring_to_string(CString cstring);

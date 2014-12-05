@@ -1,16 +1,17 @@
 #pragma once
 
-#include "Obj.h"
+#include "obj\Obj.h"
 
-#include "Cylinder.h"
-#include "Cube.h"
-#include "Prism.h"
-#include "Sphere.h"
-#include "ObjFile.h"
+#include "obj\Cylinder.h"
+#include "obj\Cube.h"
+#include "obj\Prism.h"
+#include "obj\Sphere.h"
+#include "obj\ObjFile.h"
 
 class CDocObj
 {
 public:
+	CDocObj();
 	CDocObj(CString name, OBJ_TYPE type);
 	CDocObj(CString name, CString file_name);
 	~CDocObj();
@@ -20,6 +21,7 @@ public:
 	OBJ_TYPE m_type;
 	bool m_whether_texture;
 	bool m_texture_loaded;
+
 	CString m_texture_file_name;
 	GLuint m_texture;
 	BYTE* m_bitmapData;

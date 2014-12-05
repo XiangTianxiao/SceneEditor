@@ -13,8 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Cobj">
-      <UniqueIdentifier>{c36cc0d6-913b-44ec-99ee-529eaa978e55}</UniqueIdentifier>
+    <Filter Include="CObj">
+      <UniqueIdentifier>{8e3f6733-19c8-4e9e-a0b5-a2f0c684e023}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,41 +54,41 @@
     <ClInclude Include="PropertiesWnd.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="Cylinder.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="Obj.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="Prism.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
     <ClInclude Include="DocObj.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DlgAddObj.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ObjFile.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="float2.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
-    <ClInclude Include="float3.h">
-      <Filter>Cobj</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LightTree.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\Cube.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\Cylinder.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\float2.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\float3.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\Obj.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\ObjFile.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\Prism.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
+    <ClInclude Include="obj\Sphere.h">
+      <Filter>CObj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -119,41 +119,41 @@
     <ClCompile Include="PropertiesWnd.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="Cylinder.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="Obj.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="Prism.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
     <ClCompile Include="DocObj.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DlgAddObj.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ObjFile.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="float2.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
-    <ClCompile Include="float3.cpp">
-      <Filter>Cobj</Filter>
-    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LightTree.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\Cube.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\Cylinder.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\float2.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\float3.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\Obj.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\ObjFile.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\Prism.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="obj\Sphere.cpp">
+      <Filter>CObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

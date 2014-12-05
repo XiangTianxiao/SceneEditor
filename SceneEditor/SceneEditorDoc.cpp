@@ -22,6 +22,8 @@
 IMPLEMENT_DYNCREATE(CSceneEditorDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CSceneEditorDoc, CDocument)
+	ON_COMMAND(ID_FILE_MY_OPEN, &CSceneEditorDoc::OnFileMyOpen)
+	ON_COMMAND(ID_FILE_MY_SAVE, &CSceneEditorDoc::OnFileMySave)
 END_MESSAGE_MAP()
 
 
@@ -255,4 +257,147 @@ CLight* CSceneEditorDoc::add_light()
 	/////////////////////////////////////////////////
 	m_light_list.push_back(pLight);
 	return pLight;
+}
+
+void CSceneEditorDoc::save_file(string filename)
+{
+	ofstream file;
+	file.open(filename);
+	if (!file)
+		throw "void CSceneEditorDoc::save_file(string filename)";
+
+	for (auto i = m_obj_list.begin(); i != m_obj_list.end(); i++)
+	{
+		switch ((*i)->m_type)
+		{
+		case CUBE:
+			file << *((CCube*)((*i)->m_obj));
+			break;
+		case CYLINDER:
+			file << *((CCylinder*)((*i)->m_obj));
+			break;
+		case PRISM:
+			file << *((CPrism*)((*i)->m_obj));
+			break;
+		case SPHERE:
+			file << *((CSphere*)((*i)->m_obj));
+			break;
+		case OBJ_FILE:
+			file << *((CObjFile*)((*i)->m_obj));
+			break;
+		default:
+			break;
+		}
+	}
+
+
+	file.close();
+}
+void CSceneEditorDoc::open_file(string filename)
+{
+	ifstream file;
+	file.open(filename);
+	if (!file)
+		throw "void CSceneEditorDoc::open_file(string filename)";
+
+	string temp;
+	file >> temp;
+	while (file.eof() == false)
+	{
+		CObj* obj;
+		CDocObj* pDocObj = new CDocObj();
+		OBJ_TYPE type;
+		if (temp == "<cube>")
+		{
+			obj = new CCube(file);
+			type = CUBE;
+		}
+		else if (temp == "<cylinder>")
+		{
+			obj = new CCylinder(file);
+			type = CYLINDER;
+		}
+		else if (temp == "<objfile>")
+		{
+			obj = new CObjFile(file);
+			type = OBJ_FILE;
+		}
+		else if (temp == "<prism>")
+		{
+			obj = new CPrism(file);
+			type = PRISM;
+		}
+		else if (temp == "<sphere>")
+		{
+			obj = new CSphere(file);
+			type = SPHERE;
+		}
+		else
+			throw "void CSceneEditorDoc::open_file(string filename)";
+		CString name = case_name_overlap(CString(temp.c_str()));
+		pDocObj->m_name = name;
+		pDocObj->m_type = type;
+		pDocObj->m_obj = obj;
+		m_obj_list.push_back(pDocObj);
+
+		file >> temp;
+	}
+}
+
+void CSceneEditorDoc::OnFileMyOpen()
+{
+	// TODO:  在此添加命令处理程序代码
+	CString c_filename;
+	string filename;
+	CFileDialog dlg(TRUE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		_T("3se"),
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("3d scene editor Files (*.3se)|*.3se|"),
+		NULL);
+	if (dlg.DoModal() == IDOK)
+	{
+		c_filename = dlg.GetPathName(); //文件名保存在了FilePathName里
+		string filename = cstring_to_string(c_filename);
+		open_file(filename);
+	}
+}
+
+
+void CSceneEditorDoc::OnFileMySave()
+{
+	// TODO:  在此添加命令处理程序代码
+	CString c_filename;
+	string filename;
+	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		_T("3se"),
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("3d scene editor Files (*.3se)|*.3se|"),
+		NULL);
+	if (dlg.DoModal() == IDOK)
+	{
+		c_filename = dlg.GetPathName(); //文件名保存在了FilePathName里
+		string filename = cstring_to_string(c_filename);
+		save_file(filename);
+	}
+}
+
+string cstring_to_string(CString cstring)
+{
+	//M$，良心大大地坏了
+	//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
+	int n = cstring.GetLength();    // n = 14, len = 18
+	//获取宽字节字符的大小，大小是按字节计算的
+	int len = WideCharToMultiByte(CP_ACP, 0, cstring, cstring.GetLength(), NULL, 0, NULL, NULL);
+	//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
+	char * pFileName = new char[len + 2];  //以字节为单位
+	//宽字节编码转换成多字节编码
+	WideCharToMultiByte(CP_ACP, 0, cstring, cstring.GetLength(), pFileName, len, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, cstring, cstring.GetLength() + 1, pFileName, len + 1, NULL, NULL);
+	pFileName[len + 1] = 0;  //多字节字符以'/0'结束
+
+	string s(pFileName);
+	delete[] pFileName;
+	return s;
 }

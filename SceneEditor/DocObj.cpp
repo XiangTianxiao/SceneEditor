@@ -1,6 +1,13 @@
 
 #include "stdafx.h"
 #include "DocObj.h"
+
+CDocObj::CDocObj()
+{
+	m_whether_texture = false;
+	m_texture_loaded = false;
+}
+
 CDocObj::CDocObj(CString name, OBJ_TYPE type)
 {
 	m_name = name;
@@ -34,20 +41,10 @@ CDocObj::CDocObj(CString name, CString file_name)
 	m_name = name;
 	m_type = OBJ_FILE;
 	CObjFile* m_objfile = new CObjFile();
+	string filename;
+	filename = cstring_to_string(file_name);
 
-	//M$我操你大爷，搞得这么麻烦
-	//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
-	int n = file_name.GetLength();    // n = 14, len = 18
-	//获取宽字节字符的大小，大小是按字节计算的
-	int len = WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), NULL, 0, NULL, NULL);
-	//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
-	char * pFileName = new char[len + 1];  //以字节为单位
-	//宽字节编码转换成多字节编码
-	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), pFileName, len, NULL, NULL);
-	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
-	pFileName[len + 1] = 0;  //多字节字符以'/0'结束
-
-	m_objfile->loadObj(pFileName);
+	m_objfile->loadObj(filename);
 
 	m_obj = (CObj*)m_objfile;
 
@@ -450,20 +447,11 @@ void CDocObj::change_value(CMFCPropertyGridProperty* pProp)
 			m_bitmapData = NULL;
 		}
 
-		//M$我操你大爷，搞得这么麻烦
-		//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
-		int n = m_texture_file_name.GetLength();    // n = 14, len = 18
-		//获取宽字节字符的大小，大小是按字节计算的
-		int len = WideCharToMultiByte(CP_ACP, 0, m_texture_file_name, m_texture_file_name.GetLength(), NULL, 0, NULL, NULL);
-		//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
-		char * pFileName = new char[len + 1];  //以字节为单位
-		//宽字节编码转换成多字节编码
-		WideCharToMultiByte(CP_ACP, 0, m_texture_file_name, m_texture_file_name.GetLength(), pFileName, len, NULL, NULL);
-		WideCharToMultiByte(CP_ACP, 0, m_texture_file_name, m_texture_file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
-		pFileName[len + 1] = 0;  //多字节字符以'/0'结束
+		string filename;
+		filename = cstring_to_string(m_texture_file_name);
 
 		glGenTextures(1, &m_texture);
-		texload(pFileName);
+		texload(filename.c_str());
 
 		return;
 	}
@@ -545,18 +533,8 @@ void CDocObj::exportobj(CString file_name)
 {
 	if (m_type != OBJ_FILE)
 		throw CString("void CDocObj::exportobj(CString filename) not obj file");
-
-	//注意：以下n和len的值大小不同,n是按字符计算的，len是按字节计算的
-	int n = file_name.GetLength();    // n = 14, len = 18
-	//获取宽字节字符的大小，大小是按字节计算的
-	int len = WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), NULL, 0, NULL, NULL);
-	//为多字节字符数组申请空间，数组大小为按字节计算的宽字节字节大小
-	char * pFileName = new char[len + 1];  //以字节为单位
-	//宽字节编码转换成多字节编码
-	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength(), pFileName, len, NULL, NULL);
-	WideCharToMultiByte(CP_ACP, 0, file_name, file_name.GetLength() + 1, pFileName, len + 1, NULL, NULL);
-	pFileName[len + 1] = 0;  //多字节字符以'/0'结束
-
-	((CObjFile*)m_obj)->exportobj(pFileName);
+	string filename;
+	filename = cstring_to_string(file_name);
+	((CObjFile*)m_obj)->exportobj(filename);
 
 }

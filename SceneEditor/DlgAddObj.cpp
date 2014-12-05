@@ -144,7 +144,6 @@ void CDlgAddObj::OnBnClickedRadioAddObjfile()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	UpdateData(TRUE);
-
 	CFileDialog dlg(TRUE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
 		NULL,
 		NULL,

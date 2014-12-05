@@ -698,11 +698,18 @@ void CSceneEditorView::RenderScene()
 	
 	//////////////////////////////////////////////////////
 	grid();
+	
+	if (m_PolygonMode == LINE)
+		glDisable(GL_LIGHTING);
+	else
+		glEnable(GL_LIGHTING);
+
 	auto v = pDoc->m_obj_list;
 	for (auto i = v.begin(); i != v.end(); i++)
 	{
 		(*i)->draw();
 	}
+	glEnable(GL_LIGHTING);
 
 	MarkSelected();
 
@@ -731,12 +738,10 @@ void CSceneEditorView::RenderLight()
 	if (!pDoc)
 		return;
 
-	glEnable(GL_LIGHTING);
-
 	glShadeModel(GL_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
-	
+
 	auto list = pDoc->m_light_list;
 	int count = 0;
 	for (auto i = list.begin(); i != list.end(); i++)
@@ -1083,12 +1088,14 @@ void CSceneEditorView::SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath)
 void CSceneEditorView::OnCmdCapture()
 {
 	// TODO:  在此添加命令处理程序代码
+
 	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
 		NULL,
 		NULL,
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		(LPCTSTR)_TEXT("bmp Files (*.bmp)|*.bmp|"),
 		NULL);
+	
 	if (dlg.DoModal() == IDOK)
 	{
 		CString file_name = dlg.GetPathName();
@@ -1161,7 +1168,7 @@ void CSceneEditorView::OnCmdExportObj()
 {
 	// TODO:  在此添加命令处理程序代码
 	CFileDialog dlg(FALSE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
-		NULL,
+		_T("obj"),
 		NULL,
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		(LPCTSTR)_TEXT("obj Files (*.obj)|*.obj|"),

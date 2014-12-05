@@ -98,13 +98,15 @@
 #define ID_32797                        32797
 #define ID_32798                        32798
 #define ID_32799                        32799
+#define ID_FILE_MY_OPEN                 32800
+#define ID_FILE_MY_SAVE                 32801
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32800
+#define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
