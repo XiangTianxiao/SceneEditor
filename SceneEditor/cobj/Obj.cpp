@@ -36,40 +36,7 @@ CObj::CObj()
 
 CObj::CObj(istream& file)
 {
-	string temp;
-	file >> temp;
-	while (temp!="</obj>")
-	{
-		if (temp == "position")
-		{
-			file >> m_x >> m_y >> m_z;
-		}
-		if (temp == "size")
-		{
-			file >> m_l >> m_w >> m_h;
-		}
-		if (temp == "angle")
-		{
-			file >> m_angle_x >> m_angle_y >> m_angle_z;
-		}
-		if (temp == "ambient")
-		{
-			file >> m_ambient[0] >> m_ambient[1] >> m_ambient[2] >> m_ambient[3];
-		}
-		if (temp == "diffuse")
-		{
-			file >> m_diffuse[0] >> m_diffuse[1] >> m_diffuse[2] >> m_diffuse[3];
-		}
-		if (temp == "specular")
-		{
-			file >> m_specular[0] >> m_specular[1] >> m_specular[2] >> m_specular[3];
-		}
-		if (temp == "shininess")
-		{
-			file >> m_shininess;
-		}
-		file >> temp;
-	}
+	load(file);
 }
 
 CObj::~CObj()
@@ -110,4 +77,42 @@ ostream& operator<<(ostream& out, CObj obj)
 	out << "</obj>" << endl;
 
 	return out;
+}
+
+void CObj::load(istream& file)
+{
+	string temp;
+	file >> temp;
+	while (temp != "</obj>")
+	{
+		if (temp == "position")
+		{
+			file >> m_x >> m_y >> m_z;
+		}
+		if (temp == "size")
+		{
+			file >> m_l >> m_w >> m_h;
+		}
+		if (temp == "angle")
+		{
+			file >> m_angle_x >> m_angle_y >> m_angle_z;
+		}
+		if (temp == "ambient")
+		{
+			file >> m_ambient[0] >> m_ambient[1] >> m_ambient[2] >> m_ambient[3];
+		}
+		if (temp == "diffuse")
+		{
+			file >> m_diffuse[0] >> m_diffuse[1] >> m_diffuse[2] >> m_diffuse[3];
+		}
+		if (temp == "specular")
+		{
+			file >> m_specular[0] >> m_specular[1] >> m_specular[2] >> m_specular[3];
+		}
+		if (temp == "shininess")
+		{
+			file >> m_shininess;
+		}
+		file >> temp;
+	}
 }

@@ -6,7 +6,7 @@ CCube::CCube()
 {
 }
 
-CCube::CCube(istream& file)
+CCube::CCube(istream& file) :CCube()
 {
 	string temp;
 	file >> temp;
@@ -14,7 +14,7 @@ CCube::CCube(istream& file)
 	while (temp != "</cube>")
 	{
 		if (temp == "<obj>")
-			CObj::CObj(file);
+			CObj::load(file);
 		else
 			throw "CCube::CCube(istream& file)";
 		file >> temp;

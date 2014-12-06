@@ -23,13 +23,13 @@ CObjFile::CObjFile()
 	m_list = 0;
 }
 
-CObjFile::CObjFile(istream& file)
+CObjFile::CObjFile(istream& file) :CObjFile()
 {
-	CObjFile();
+	
 	string temp;
 	file >> temp;
 	if (temp == "<obj>")
-		CObj::CObj(file);
+		CObj::load(file);
 	else if (temp == "filename")
 	{
 		file >> temp;

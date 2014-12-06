@@ -12,12 +12,8 @@ CCylinder::CCylinder()
 	m_stacks = 30;
 }
 
-CCylinder::CCylinder(istream& file)
+CCylinder::CCylinder(istream& file) :CCylinder()
 {
-	//placement new
-	//http://blog.chinaunix.net/uid-23741326-id-3385581.html
-	//不这么使用的话，则是新建一个临时变亮，而非调用这个函数
-
 	string temp;
 	file >> temp;
 
@@ -25,8 +21,7 @@ CCylinder::CCylinder(istream& file)
 	{
 		if (temp == "<obj>")
 		{
-			new(this) CObj(file);
-			new(this) CCylinder();
+			CObj::load(file);
 		}
 		//下底半径
 		if (temp == "baseRadius")

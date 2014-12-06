@@ -35,6 +35,7 @@ public:
 	virtual void draw(){};// = 0;
 	virtual void mark(){};// = 0;
 	friend ostream& operator<<(ostream& out, CObj obj);
+	void load(istream& file);
 	
 protected:
 	void SetMaterial();

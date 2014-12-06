@@ -100,13 +100,23 @@
 #define ID_32799                        32799
 #define ID_FILE_MY_OPEN                 32800
 #define ID_FILE_MY_SAVE                 32801
+#define ID_32802                        32802
+#define ID_32803                        32803
+#define ID_32804                        32804
+#define ID_CMD_ADJUST_XZ                32805
+#define ID_CMD_ADJUST_YZ                32806
+#define ID_CMD_ADJUST_XY                32807
+#define ID_32808                        32808
+#define ID_32809                        32809
+#define ID_PROJECTION_PARALLEL          32810
+#define ID_PROJECTION_PERSPECTIVE       32811
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32802
+#define _APS_NEXT_COMMAND_VALUE         32812
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

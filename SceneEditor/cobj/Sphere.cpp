@@ -9,7 +9,7 @@ CSphere::CSphere()
 	m_r = 1;
 }
 
-CSphere::CSphere(istream& file)
+CSphere::CSphere(istream& file) :CSphere()
 {
 	CSphere();
 	string temp;
@@ -18,7 +18,7 @@ CSphere::CSphere(istream& file)
 	while (temp != "</sphere>")
 	{
 		if (temp == "<obj>")
-			CObj::CObj(file);
+			CObj::load(file);
 		if (temp == "r")
 			file >> m_r;
 		if (temp == "slices")

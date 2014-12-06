@@ -3,6 +3,7 @@ class CLight
 {
 public:
 	CLight();
+	CLight(istream& file);
 	~CLight();
 
 public:
@@ -14,5 +15,6 @@ public:
 	void mark();
 	void draw_property(CMFCPropertyGridCtrl* PropList);
 	void change_value(CMFCPropertyGridProperty* pProp);
+	friend ostream& operator<<(ostream& out, CLight light);
 };
 

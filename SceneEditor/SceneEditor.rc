@@ -186,6 +186,10 @@ BEGIN
         MENUITEM "选择",                          ID_MENU_SELECT
         MENUITEM "旋转",                          ID_MENU_ROTATION
         MENUITEM "平移",                          ID_MENU_MOVE
+        MENUITEM SEPARATOR
+        MENUITEM "主视图",                         ID_CMD_ADJUST_XZ
+        MENUITEM "侧视图",                         ID_CMD_ADJUST_YZ
+        MENUITEM "俯视图",                         ID_CMD_ADJUST_XY
     END
     POPUP "命令"
     BEGIN
@@ -203,6 +207,9 @@ BEGIN
     BEGIN
         MENUITEM "LINE",                        ID_POLYGONMODE_LINE
         MENUITEM "FILL",                        ID_POLYGONMODE_FILL
+        MENUITEM SEPARATOR
+        MENUITEM "平行投影",                        ID_PROJECTION_PARALLEL
+        MENUITEM "透视投影",                        ID_PROJECTION_PERSPECTIVE
     END
     POPUP "帮助(&H)"
     BEGIN

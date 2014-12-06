@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Prism.h"
 #include <algorithm>
+#include "float3.h"
 using namespace std;
 CPrism::CPrism()
 {
@@ -10,7 +11,7 @@ CPrism::CPrism()
 	m_topRadius = 1.0;
 }
 
-CPrism::CPrism(istream& file)
+CPrism::CPrism(istream& file) :CPrism()
 {
 	CPrism();
 	string temp;
@@ -19,7 +20,7 @@ CPrism::CPrism(istream& file)
 	while (temp != "</prism>")
 	{
 		if (temp == "<obj>")
-			CObj::CObj(file);
+			CObj::load(file);
 		if (temp == "edge")
 			file >> m_edge;
 		if (temp == "baseRadius")
@@ -73,11 +74,30 @@ void CPrism::DrawBottom(GLfloat h, GLfloat r)
 
 void CPrism::DrawSide()
 {
-	GLfloat vertex[4];
 	const GLfloat delta_angle = 2.0*M_PI / m_edge;
+	///////////////////////////////////////////////////
+	glBegin(GL_QUADS);
+	for (int i = 0; i < m_edge; i++)
+	{
+		float3 v1(sin(delta_angle*i)*m_baseRadius, cos(delta_angle*i)*m_baseRadius, 0);
+		float3 v2(sin(delta_angle*i)*m_topRadius, cos(delta_angle*i)*m_topRadius, m_height);
+		float3 v3(sin(delta_angle*(i + 1))*m_topRadius, cos(delta_angle*(i + 1))*m_topRadius, m_height);
+		float3 v4(sin(delta_angle*(i + 1))*m_baseRadius, cos(delta_angle*(i + 1))*m_baseRadius, 0);
+		float3 vt = (v2 - v1)*(v3 - v2);
+		glNormal3f(vt.x, vt.y, vt.z);
+		glVertex3f(v1.x, v1.y, v1.z);
+		glVertex3f(v2.x, v2.y, v2.z);
+		glVertex3f(v3.x, v3.y, v3.z);
+		glVertex3f(v4.x, v4.y, v4.z);
+	}
+	glEnd();
+	///////////////////////////////////////////////////
+	/*
+	GLfloat vertex[4];
 
 	glBegin(GL_QUAD_STRIP);
 	vertex[3] = 1.0;
+
 	for (int i = 0; i <= m_edge; i++)
 	{
 
@@ -93,6 +113,7 @@ void CPrism::DrawSide()
 		glVertex4fv(vertex);
 	}
 	glEnd();
+	*/
 }
 
 void CPrism::mark()

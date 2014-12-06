@@ -289,6 +289,10 @@ void CSceneEditorDoc::save_file(string filename)
 			break;
 		}
 	}
+	for (auto i = m_light_list.begin(); i != m_light_list.end(); i++)
+	{
+		file << *(*i);
+	}
 
 
 	file.close();
@@ -304,44 +308,56 @@ void CSceneEditorDoc::open_file(string filename)
 	file >> temp;
 	while (file.eof() == false)
 	{
-		CObj* obj;
-		CDocObj* pDocObj = new CDocObj();
-		OBJ_TYPE type;
-		if (temp == "<cube>")
+		if (temp == "<light>")
 		{
-			obj = new CCube(file);
-			type = CUBE;
-		}
-		else if (temp == "<cylinder>")
-		{
-			obj = new CCylinder(file);
-			type = CYLINDER;
-		}
-		else if (temp == "<objfile>")
-		{
-			obj = new CObjFile(file);
-			type = OBJ_FILE;
-		}
-		else if (temp == "<prism>")
-		{
-			obj = new CPrism(file);
-			type = PRISM;
-		}
-		else if (temp == "<sphere>")
-		{
-			obj = new CSphere(file);
-			type = SPHERE;
+			CLight* light;
+			light = new CLight(file);
+			m_light_list.push_back(light);
 		}
 		else
-			throw "void CSceneEditorDoc::open_file(string filename)";
-		CString name = case_name_overlap(CString(temp.c_str()));
-		pDocObj->m_name = name;
-		pDocObj->m_type = type;
-		pDocObj->m_obj = obj;
-		m_obj_list.push_back(pDocObj);
-
+		{
+			CObj* obj;
+			CDocObj* pDocObj = new CDocObj();
+			OBJ_TYPE type;
+			if (temp == "<cube>")
+			{
+				obj = new CCube(file);
+				type = CUBE;
+			}
+			else if (temp == "<cylinder>")
+			{
+				obj = new CCylinder(file);
+				type = CYLINDER;
+			}
+			else if (temp == "<objfile>")
+			{
+				obj = new CObjFile(file);
+				type = OBJ_FILE;
+			}
+			else if (temp == "<prism>")
+			{
+				obj = new CPrism(file);
+				type = PRISM;
+			}
+			else if (temp == "<sphere>")
+			{
+				obj = new CSphere(file);
+				type = SPHERE;
+			}
+			else
+				throw "void CSceneEditorDoc::open_file(string filename)";
+			CString name = case_name_overlap(CString(temp.c_str()));
+			pDocObj->m_name = name;
+			pDocObj->m_type = type;
+			pDocObj->m_obj = obj;
+			m_obj_list.push_back(pDocObj);
+		}
 		file >> temp;
 	}
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	CSceneEditorView* pView = (CSceneEditorView*)pFrame->GetActiveView();
+	pView->m_need_update_light_tree = true;
+	pView->m_need_update_obj_tree = true;
 }
 
 void CSceneEditorDoc::OnFileMyOpen()
@@ -401,3 +417,4 @@ string cstring_to_string(CString cstring)
 	delete[] pFileName;
 	return s;
 }
+

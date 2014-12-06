@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Light.h"
-
+#include <string>
+#include <istream>
+using namespace std;
 
 CLight::CLight()
 {
@@ -17,6 +19,32 @@ CLight::CLight()
 	m_on = true;
 }
 
+CLight::CLight(istream& file) :CLight()
+{
+	string temp;
+	file >> temp;
+
+	while (temp != "</light>")
+	{
+		if (temp == "name")
+		{
+			string fuckm$;
+			file >> fuckm$;
+			m_name = fuckm$.c_str();
+		}
+		if (temp == "on")
+		{
+			int a;
+			file >> a;
+			m_on = (a == 1 ? true : false);
+		}
+		if (temp == "position")
+			file >> m_light_pos[0] >> m_light_pos[1] >> m_light_pos[2] >> m_light_pos[3];
+		if (temp == "color")
+			file >> m_color[0] >> m_color[1] >> m_color[2] >> m_color[3];
+		file >> temp;
+	}
+}
 
 CLight::~CLight()
 {
@@ -158,4 +186,17 @@ void CLight::mark()
 
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
+}
+
+
+ostream& operator << (ostream& out, CLight light)
+{
+	out << "<light>" << endl;
+	out << "name " << cstring_to_string(light.m_name) << endl;
+	out << "on " << (light.m_on ? 1 : 0) << endl;
+	out << "position " << light.m_light_pos[0] << " " << light.m_light_pos[1] << " " << light.m_light_pos[2] << " " << light.m_light_pos[3] << endl;
+	out << "color " << light.m_color[0] << " " << light.m_color[1] << " " << light.m_color[2] << " " << light.m_color[3] << endl;
+	out << "</light>" << endl;
+	out << endl;
+	return out;
 }

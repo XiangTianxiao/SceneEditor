@@ -54,6 +54,13 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_COMMAND(ID_CMD_DELETE, &CSceneEditorView::OnCmdDelete)
 	ON_COMMAND(ID_CMD_EXPORT_OBJ, &CSceneEditorView::OnCmdExportObj)
 	ON_UPDATE_COMMAND_UI(ID_CMD_EXPORT_OBJ, &CSceneEditorView::OnUpdateCmdExportObj)
+	ON_COMMAND(ID_CMD_ADJUST_XZ, &CSceneEditorView::OnCmdAdjustXz)
+	ON_COMMAND(ID_CMD_ADJUST_YZ, &CSceneEditorView::OnCmdAdjustYz)
+	ON_COMMAND(ID_CMD_ADJUST_XY, &CSceneEditorView::OnCmdAdjustXy)
+	ON_COMMAND(ID_PROJECTION_PARALLEL, &CSceneEditorView::OnProjectionParallel)
+	ON_COMMAND(ID_PROJECTION_PERSPECTIVE, &CSceneEditorView::OnProjectionPerspective)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PARALLEL, &CSceneEditorView::OnUpdateProjectionParallel)
+	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CSceneEditorView::OnUpdateProjectionPerspective)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -151,6 +158,7 @@ CSceneEditorView::CSceneEditorView()
 
 	m_move_x = 0;
 	m_move_y = 0;
+	m_move_z = -10;
 
 	/*透视投影
 	m_eye_x = 10;
@@ -176,6 +184,8 @@ CSceneEditorView::CSceneEditorView()
 	m_zoom = 100;
 
 	m_selected_is_valid = false;
+
+	m_projection_mode = PARALLEL;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -211,12 +221,16 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 
 
 	glLoadIdentity();
+	if (m_projection_mode == PERSPECTIVE)
+		glTranslatef(m_move_x, m_move_y, m_move_z);
 	//////////////////////////////////	
 	//平行投影
 	glRotatef(m_rotate_x, 1.0f, 0.0f, 0.0f);
 	glRotatef(m_rotate_y, 0.0f, 1.0f, 0.0f);
 	glRotatef(m_rotate_z, 0.0f, 0.0f, 1.0f);
-	glTranslatef(m_move_x, m_move_y, 0);
+	if (m_projection_mode == PARALLEL)
+		glTranslatef(m_move_x, m_move_y, 0);
+
 	//透视投影
 	//////////////////////////////////////////////
 	//gluLookAt(m_eye_x, m_eye_y, m_eye_z, m_center_x, m_center_y, m_center_z, 0, 0, 1);
@@ -495,17 +509,22 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	/////////////////////////////////////////////////////////////////
-	//平行投影
-	m_cx = cx;
-	m_cy = cy;
-	glOrtho(-cx / m_zoom, cx / m_zoom, -cy / m_zoom, cy / m_zoom, -100, 100);
-	//glOrtho(-cx / 100, cx / 100, -cy / 100, cy / 100, -100, 100);
-	/////////////////////////////////////////////////////////////////
-	//透视投影
-	//GLdouble aspect_ratio; // width/height ratio
-	//aspect_ratio = (GLdouble)cx / (GLdouble)cy;
-	//gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
+	if (m_projection_mode == PARALLEL)
+	{
+		/////////////////////////////////////////////////////////////////
+		//平行投影
+		m_cx = cx;
+		m_cy = cy;
+		glOrtho(-cx / m_zoom, cx / m_zoom, -cy / m_zoom, cy / m_zoom, -100, 100);
+		/////////////////////////////////////////////////////////////////
+	}
+	else
+	{
+		//透视投影
+		GLdouble aspect_ratio; // width/height ratio
+		aspect_ratio = (GLdouble)cx / (GLdouble)cy;
+		gluPerspective(45.0f, aspect_ratio, .01f, 200.0f);//画三维
+	}
 
 	glMatrixMode(GL_MODELVIEW);
 	
@@ -1111,11 +1130,18 @@ void CSceneEditorView::OnCmdCapture()
 BOOL CSceneEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
-	m_zoom += zDelta / 10.0;
-	if (m_zoom < 5)
-		m_zoom -= zDelta / 10.0;
-	if (m_zoom > 1000)
-		m_zoom -= zDelta / 10.0;
+	if (m_projection_mode == PARALLEL)
+	{
+		m_zoom += zDelta / 10.0;
+		if (m_zoom < 5)
+			m_zoom -= zDelta / 10.0;
+		if (m_zoom > 1000)
+			m_zoom -= zDelta / 10.0;
+	}
+	else
+	{
+		m_move_z += zDelta / 50.0;
+	}
 	//哎，最后只能这样用。到底怎么发WM_SIZE消息啊
 	OnSize(0, m_cx, m_cy);
 	Invalidate(FALSE);
@@ -1188,4 +1214,66 @@ void CSceneEditorView::OnUpdateCmdExportObj(CCmdUI *pCmdUI)
 		pCmdUI->Enable(TRUE);
 	else
 		pCmdUI->Enable(FALSE);
+}
+
+
+void CSceneEditorView::OnCmdAdjustXz()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_rotate_x = -90;
+	m_rotate_y = 0;
+	m_rotate_z = 0;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnCmdAdjustYz()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_rotate_x = -90;
+	m_rotate_y = 0;
+	m_rotate_z = -90;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnCmdAdjustXy()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_rotate_x = 0;
+	m_rotate_y = 0;
+	m_rotate_z = 0;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnProjectionParallel()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_projection_mode = PARALLEL;
+	OnSize(0, m_cx, m_cy);
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnProjectionPerspective()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_projection_mode = PERSPECTIVE;
+	OnSize(0, m_cx, m_cy);
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnUpdateProjectionParallel(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_projection_mode == PARALLEL);
+}
+
+
+void CSceneEditorView::OnUpdateProjectionPerspective(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_projection_mode == PERSPECTIVE);
 }

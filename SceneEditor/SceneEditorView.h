@@ -19,6 +19,15 @@ enum POLYGON_MODE
 	LINE,
 	FILL
 };
+
+
+void grid();
+
+enum PROJECTION
+{
+	PARALLEL,
+	PERSPECTIVE
+};
 /*
 enum ADD_OBJ_TYPE
 {
@@ -60,6 +69,7 @@ public:
 
 	GLfloat m_move_x;
 	GLfloat m_move_y;
+	GLfloat m_move_z;
 
 	int sign(GLfloat x);
 
@@ -84,6 +94,9 @@ public:
 	void SaveHwndToBmpFile(HWND hWnd, LPCTSTR lpszPath);
 	GLfloat m_zoom;
 	int m_cx, m_cy;//也就是窗口大小
+
+	PROJECTION m_projection_mode;
+
 protected: // 仅从序列化创建
 	CSceneEditorView();
 	DECLARE_DYNCREATE(CSceneEditorView)
@@ -142,6 +155,13 @@ public:
 	afx_msg void OnCmdDelete();
 	afx_msg void OnCmdExportObj();
 	afx_msg void OnUpdateCmdExportObj(CCmdUI *pCmdUI);
+	afx_msg void OnCmdAdjustXz();
+	afx_msg void OnCmdAdjustYz();
+	afx_msg void OnCmdAdjustXy();
+	afx_msg void OnProjectionParallel();
+	afx_msg void OnProjectionPerspective();
+	afx_msg void OnUpdateProjectionParallel(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateProjectionPerspective(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本
