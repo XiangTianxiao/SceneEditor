@@ -68,6 +68,8 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_WM_KEYDOWN()
 	ON_WM_KEYUP()
 	ON_WM_TIMER()
+	ON_COMMAND(ID_ANIMATE, &CSceneEditorView::OnAnimate)
+	ON_UPDATE_COMMAND_UI(ID_ANIMATE, &CSceneEditorView::OnUpdateAnimate)
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -198,6 +200,8 @@ CSceneEditorView::CSceneEditorView()
 	m_grid = true;
 
 	m_roaming_speed = 1;
+
+	m_animate_on = false;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -1424,9 +1428,26 @@ void CSceneEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CSceneEditorView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
-	if (nIDEvent == 1)
+	if (m_animate_on == true)
 	{
-		//Invalidate(FALSE);
+		if (nIDEvent == 1)
+		{
+			//Invalidate(FALSE);
+		}
 	}
 	CView::OnTimer(nIDEvent);
+}
+
+
+void CSceneEditorView::OnAnimate()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_animate_on = !m_animate_on;
+}
+
+
+void CSceneEditorView::OnUpdateAnimate(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_animate_on == true);
 }
