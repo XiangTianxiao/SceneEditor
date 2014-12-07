@@ -90,6 +90,9 @@
     <ClInclude Include="cobj\Sphere.h">
       <Filter>CObj</Filter>
     </ClInclude>
+    <ClInclude Include="cobj\helicopter.h">
+      <Filter>CObj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SceneEditor.cpp">
@@ -153,6 +156,9 @@
       <Filter>CObj</Filter>
     </ClCompile>
     <ClCompile Include="cobj\Sphere.cpp">
+      <Filter>CObj</Filter>
+    </ClCompile>
+    <ClCompile Include="cobj\helicopter.cpp">
       <Filter>CObj</Filter>
     </ClCompile>
   </ItemGroup>

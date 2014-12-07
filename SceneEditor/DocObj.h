@@ -7,6 +7,7 @@
 #include "cobj\Prism.h"
 #include "cobj\Sphere.h"
 #include "cobj\ObjFile.h"
+#include "cobj\helicopter.h"
 
 class CDocObj
 {

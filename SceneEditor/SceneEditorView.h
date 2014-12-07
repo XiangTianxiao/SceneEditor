@@ -101,6 +101,8 @@ public:
 
 	bool m_grid;
 
+	bool m_animate_on;
+
 protected: // 仅从序列化创建
 	CSceneEditorView();
 	DECLARE_DYNCREATE(CSceneEditorView)
@@ -173,6 +175,8 @@ public:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnAnimate();
+	afx_msg void OnUpdateAnimate(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本

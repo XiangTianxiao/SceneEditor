@@ -106,6 +106,7 @@
     <ClInclude Include="cobj\Cylinder.h" />
     <ClInclude Include="cobj\float2.h" />
     <ClInclude Include="cobj\float3.h" />
+    <ClInclude Include="cobj\helicopter.h" />
     <ClInclude Include="cobj\Obj.h" />
     <ClInclude Include="cobj\ObjFile.h" />
     <ClInclude Include="cobj\Prism.h" />
@@ -131,6 +132,7 @@
     <ClCompile Include="cobj\Cylinder.cpp" />
     <ClCompile Include="cobj\float2.cpp" />
     <ClCompile Include="cobj\float3.cpp" />
+    <ClCompile Include="cobj\helicopter.cpp" />
     <ClCompile Include="cobj\Obj.cpp" />
     <ClCompile Include="cobj\ObjFile.cpp" />
     <ClCompile Include="cobj\Prism.cpp" />

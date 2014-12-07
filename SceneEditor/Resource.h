@@ -114,13 +114,15 @@
 #define ID_ROAMING_MODE                 32813
 #define ID_32814                        32814
 #define ID_SWITCH_GRID                  32815
+#define ID_Menu                         32816
+#define ID_ANIMATE                      32817
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32816
+#define _APS_NEXT_COMMAND_VALUE         32818
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

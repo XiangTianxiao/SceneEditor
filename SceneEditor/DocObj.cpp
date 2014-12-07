@@ -6,6 +6,7 @@ CDocObj::CDocObj()
 {
 	m_whether_texture = false;
 	m_texture_loaded = false;
+	m_bitmapData = NULL;
 }
 
 CDocObj::CDocObj(CString name, OBJ_TYPE type)
@@ -25,6 +26,9 @@ CDocObj::CDocObj(CString name, OBJ_TYPE type)
 		break;
 	case SPHERE:
 		m_obj = new CSphere();
+		break;
+	case HELICOPTER:
+		m_obj = new helicopter();
 		break;
 	default:
 		throw CString("CDocObj(OBJ_TYPE type)");

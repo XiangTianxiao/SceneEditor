@@ -13,6 +13,8 @@
 
 #include <propkey.h>
 
+#include "cobj\helicopter.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -44,6 +46,8 @@ CSceneEditorDoc::CSceneEditorDoc()
 		m_obj_list.push_back(pObj);
 	}
 	*/
+	CDocObj* pobj = new CDocObj(_T("helicopter"), HELICOPTER);
+	m_obj_list.push_back(pobj);
 	{
 		CLight* pLight = new CLight();
 		pLight->m_name = CString("light_0");
@@ -74,15 +78,18 @@ BOOL CSceneEditorDoc::OnNewDocument()
 
 	// TODO:  在此添加重新初始化代码
 	// (SDI 文档将重用该文档)
+
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	/*
 	m_light_list.clear();
 	m_obj_list.clear();
-	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	*/
 	if (pFrame == NULL)
 		return TRUE;
+	pFrame->remove_all_prop_list();
 	CSceneEditorView* pView = (CSceneEditorView*)pFrame->GetActiveView();
 	if (pView == NULL)
 		return TRUE;
-	pFrame->remove_all_prop_list();
 	pView->m_selected_is_valid = false;
 	pView->m_need_update_light_tree = true;
 	pView->m_need_update_obj_tree = true;

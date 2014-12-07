@@ -213,6 +213,8 @@ BEGIN
         MENUITEM "平行投影",                        ID_PROJECTION_PARALLEL
         MENUITEM "透视投影",                        ID_PROJECTION_PERSPECTIVE
         MENUITEM "漫游视图",                        ID_ROAMING_MODE
+        MENUITEM SEPARATOR
+        MENUITEM "动画",                          ID_ANIMATE
     END
     POPUP "帮助(&H)"
     BEGIN

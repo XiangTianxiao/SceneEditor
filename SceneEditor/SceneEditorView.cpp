@@ -161,13 +161,13 @@ void grid()
 CSceneEditorView::CSceneEditorView()
 {
 	// TODO:  在此处添加构造代码
-	m_rotate_x = -90;
+	m_rotate_x = 0;
 	m_rotate_y = 0;
 	m_rotate_z = 0;
 
 	m_move_x = 0;
-	m_move_y = 10;
-	m_move_z = 0;
+	m_move_y = 0;
+	m_move_z = -10;
 
 	/*透视投影
 	m_eye_x = 10;
@@ -184,7 +184,7 @@ CSceneEditorView::CSceneEditorView()
 
 	m_PolygonMode = FILL;
 
-	m_view_op = VIEW_SELECT;
+	m_view_op = VIEW_ROTATE;
 	m_obj_type = CUBE;
 
 	m_need_update_obj_tree = true;
@@ -194,14 +194,14 @@ CSceneEditorView::CSceneEditorView()
 
 	m_selected_is_valid = false;
 
-	m_projection_mode = PARALLEL;
-	m_roaming_mode = false;
+	m_projection_mode = PERSPECTIVE;
+	m_roaming_mode = true;
 
 	m_grid = true;
 
 	m_roaming_speed = 1;
 
-	m_animate_on = false;
+	m_animate_on = true;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -990,7 +990,7 @@ void CSceneEditorView::OnCmdAdd()
 	if (dlg.DoModal() == IDOK)
 	{
 		m_obj_type = dlg.m_obj_type;
-		m_view_op = VIEW_SELECT;
+		//m_view_op = VIEW_SELECT;
 		if (m_obj_type == OBJ_FILE)
 			add_obj(dlg.m_add_obj_name, dlg.m_objfile_name);
 		else
@@ -1039,7 +1039,7 @@ void CSceneEditorView::OnCmdAddLight()
 	}
 	else
 	{
-		m_view_op = VIEW_SELECT;
+		//m_view_op = VIEW_SELECT;
 		add_light();
 		m_need_update_light_tree = true;
 	}
@@ -1432,7 +1432,7 @@ void CSceneEditorView::OnTimer(UINT_PTR nIDEvent)
 	{
 		if (nIDEvent == 1)
 		{
-			//Invalidate(FALSE);
+			Invalidate(FALSE);
 		}
 	}
 	CView::OnTimer(nIDEvent);
