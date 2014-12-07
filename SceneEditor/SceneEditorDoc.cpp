@@ -74,7 +74,18 @@ BOOL CSceneEditorDoc::OnNewDocument()
 
 	// TODO:  在此添加重新初始化代码
 	// (SDI 文档将重用该文档)
-
+	m_light_list.clear();
+	m_obj_list.clear();
+	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+	if (pFrame == NULL)
+		return TRUE;
+	CSceneEditorView* pView = (CSceneEditorView*)pFrame->GetActiveView();
+	if (pView == NULL)
+		return TRUE;
+	pFrame->remove_all_prop_list();
+	pView->m_selected_is_valid = false;
+	pView->m_need_update_light_tree = true;
+	pView->m_need_update_obj_tree = true;
 	return TRUE;
 }
 

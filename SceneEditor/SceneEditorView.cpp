@@ -61,6 +61,13 @@ BEGIN_MESSAGE_MAP(CSceneEditorView, CView)
 	ON_COMMAND(ID_PROJECTION_PERSPECTIVE, &CSceneEditorView::OnProjectionPerspective)
 	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PARALLEL, &CSceneEditorView::OnUpdateProjectionParallel)
 	ON_UPDATE_COMMAND_UI(ID_PROJECTION_PERSPECTIVE, &CSceneEditorView::OnUpdateProjectionPerspective)
+	ON_COMMAND(ID_ROAMING_MODE, &CSceneEditorView::OnRoamingMode)
+	ON_UPDATE_COMMAND_UI(ID_ROAMING_MODE, &CSceneEditorView::OnUpdateRoamingMode)
+	ON_COMMAND(ID_SWITCH_GRID, &CSceneEditorView::OnSwitchGrid)
+	ON_UPDATE_COMMAND_UI(ID_SWITCH_GRID, &CSceneEditorView::OnUpdateSwitchGrid)
+	ON_WM_KEYDOWN()
+	ON_WM_KEYUP()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CSceneEditorView 构造/析构
@@ -152,13 +159,13 @@ void grid()
 CSceneEditorView::CSceneEditorView()
 {
 	// TODO:  在此处添加构造代码
-	m_rotate_x = 0;
+	m_rotate_x = -90;
 	m_rotate_y = 0;
 	m_rotate_z = 0;
 
 	m_move_x = 0;
-	m_move_y = 0;
-	m_move_z = -10;
+	m_move_y = 10;
+	m_move_z = 0;
 
 	/*透视投影
 	m_eye_x = 10;
@@ -186,6 +193,11 @@ CSceneEditorView::CSceneEditorView()
 	m_selected_is_valid = false;
 
 	m_projection_mode = PARALLEL;
+	m_roaming_mode = false;
+
+	m_grid = true;
+
+	m_roaming_speed = 1;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -221,13 +233,13 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 
 
 	glLoadIdentity();
-	if (m_projection_mode == PERSPECTIVE)
-		glTranslatef(m_move_x, m_move_y, m_move_z);
 	//////////////////////////////////	
 	//平行投影
 	glRotatef(m_rotate_x, 1.0f, 0.0f, 0.0f);
 	glRotatef(m_rotate_y, 0.0f, 1.0f, 0.0f);
 	glRotatef(m_rotate_z, 0.0f, 0.0f, 1.0f);
+	if (m_projection_mode == PERSPECTIVE)
+		glTranslatef(m_move_x, m_move_y, m_move_z);
 	if (m_projection_mode == PARALLEL)
 		glTranslatef(m_move_x, m_move_y, 0);
 
@@ -244,16 +256,26 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 	if (m_need_update_obj_tree == true)
 	{
 		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
-		pFrame->update_obj_tree(pDoc->m_obj_list);
+		if (pFrame != NULL)
+			pFrame->update_obj_tree(pDoc->m_obj_list);;
 		m_need_update_obj_tree = false;
 	}
 	if (m_need_update_light_tree == true)
 	{
 		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
-		pFrame->update_light_tree(pDoc->m_light_list);
+		if (pFrame != NULL)
+			pFrame->update_light_tree(pDoc->m_light_list);
 		m_need_update_light_tree = false;
 	}
-	//m_selected_is_valid = false;
+	if (m_selected_is_valid == false)
+	{
+		CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
+		if (pFrame != NULL)
+		{
+			pFrame->m_wndProperties.m_wndPropList.RemoveAll();
+			pFrame->m_wndProperties.m_wndPropList.Invalidate(FALSE);
+		}
+	}
 	
 	/////////////////////////////////////////////////////////////////////
 	//阴影代码
@@ -461,6 +483,9 @@ int CSceneEditorView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  在此添加您专用的创建代码
+
+	SetTimer(1, 20, NULL);
+
 	InitializeOpenGL();//初始化openGL绘图
 
 	return 0;
@@ -589,8 +614,9 @@ BOOL CSceneEditorView::InitializeOpenGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
 	//自动计算法向量
-	//glEnable(GL_AUTO_NORMAL);
-	
+	glEnable(GL_AUTO_NORMAL);
+	//合成光照和纹理
+	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 	/////////////////////////////////////////////////////////////////////
 	//阴影
 	/*
@@ -716,7 +742,8 @@ void CSceneEditorView::RenderScene()
 	*/
 	
 	//////////////////////////////////////////////////////
-	grid();
+	if (m_grid==true)
+		grid();
 	
 	if (m_PolygonMode == LINE)
 		glDisable(GL_LIGHTING);
@@ -799,20 +826,24 @@ void CSceneEditorView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
 	if (nFlags&MK_LBUTTON)
 	{
+		float theta_z = m_rotate_z / 180.0*M_PI;
+		float theta_x = (-m_rotate_x - 90) / 180.0*M_PI;
+		int delta_x = point.x - m_temp_x;
+		int delta_y = point.y - m_temp_y;
 		switch (m_view_op)
 		{
 		case NONE:
 			break;
 		case VIEW_ROTATE:
-			m_rotate_z = (m_rotate_z + (point.x - m_temp_x)) % 360;
+			m_rotate_z = (m_rotate_z + delta_x) % 360;
 			if (nFlags&MK_CONTROL)
-				m_rotate_y = (m_rotate_y + (point.y - m_temp_y)) % 360;
+				m_rotate_y = (m_rotate_y + delta_y) % 360;
 			else
-				m_rotate_x = (m_rotate_x + (point.y - m_temp_y)) % 360;
+				m_rotate_x = (m_rotate_x + delta_y) % 360;
 			break;
 		case VIEW_MOVE:
-			m_move_x += (point.x - m_temp_x) / 50.0;
-			m_move_y -= (point.y - m_temp_y) / 50.0;
+			m_move_x = m_move_x + 0.02*(delta_x*cos(theta_z) - delta_y*sin(theta_z));
+			m_move_y = m_move_y - 0.02*(delta_x*sin(theta_z) + delta_y*cos(theta_z));
 			break;
 		case VIEW_SELECT:
 			break;
@@ -1140,7 +1171,13 @@ BOOL CSceneEditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 	else
 	{
-		m_move_z += zDelta / 50.0;
+		//m_move_z += zDelta / 50.0;
+
+		float theta_z = m_rotate_z / 180.0*M_PI;
+		float theta_x = (-m_rotate_x - 90) / 180.0*M_PI;
+		m_move_x -= sin(theta_z)*cos(theta_x)*zDelta / 50.0;
+		m_move_y -= cos(theta_z)*cos(theta_x)*zDelta / 50.0;
+		m_move_z -= sin(theta_x)*zDelta / 50.0;
 	}
 	//哎，最后只能这样用。到底怎么发WM_SIZE消息啊
 	OnSize(0, m_cx, m_cy);
@@ -1223,6 +1260,10 @@ void CSceneEditorView::OnCmdAdjustXz()
 	m_rotate_x = -90;
 	m_rotate_y = 0;
 	m_rotate_z = 0;
+
+	m_move_x = 0;
+	m_move_y = 10;
+	m_move_z = 0;
 	Invalidate(FALSE);
 }
 
@@ -1232,7 +1273,11 @@ void CSceneEditorView::OnCmdAdjustYz()
 	// TODO:  在此添加命令处理程序代码
 	m_rotate_x = -90;
 	m_rotate_y = 0;
-	m_rotate_z = -90;
+	m_rotate_z = 90;
+
+	m_move_x = 10;
+	m_move_y = 0;
+	m_move_z = 0;
 	Invalidate(FALSE);
 }
 
@@ -1243,6 +1288,10 @@ void CSceneEditorView::OnCmdAdjustXy()
 	m_rotate_x = 0;
 	m_rotate_y = 0;
 	m_rotate_z = 0;
+
+	m_move_x = 0;
+	m_move_y = 0;
+	m_move_z = -10;
 	Invalidate(FALSE);
 }
 
@@ -1251,6 +1300,7 @@ void CSceneEditorView::OnProjectionParallel()
 {
 	// TODO:  在此添加命令处理程序代码
 	m_projection_mode = PARALLEL;
+	m_roaming_mode = false;
 	OnSize(0, m_cx, m_cy);
 	Invalidate(FALSE);
 }
@@ -1260,6 +1310,7 @@ void CSceneEditorView::OnProjectionPerspective()
 {
 	// TODO:  在此添加命令处理程序代码
 	m_projection_mode = PERSPECTIVE;
+	m_roaming_mode = false;
 	OnSize(0, m_cx, m_cy);
 	Invalidate(FALSE);
 }
@@ -1276,4 +1327,106 @@ void CSceneEditorView::OnUpdateProjectionPerspective(CCmdUI *pCmdUI)
 {
 	// TODO:  在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(m_projection_mode == PERSPECTIVE);
+}
+
+
+void CSceneEditorView::OnRoamingMode()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_projection_mode = PERSPECTIVE;
+	m_roaming_mode = !m_roaming_mode;
+	OnSize(0, m_cx, m_cy);
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnUpdateRoamingMode(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_projection_mode == PERSPECTIVE && m_roaming_mode == true);
+}
+
+
+
+void CSceneEditorView::OnSwitchGrid()
+{
+	// TODO:  在此添加命令处理程序代码
+	m_grid = !m_grid;
+	Invalidate(FALSE);
+}
+
+
+void CSceneEditorView::OnUpdateSwitchGrid(CCmdUI *pCmdUI)
+{
+	// TODO:  在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_grid == true);
+}
+
+
+void CSceneEditorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	//esc
+	if (m_roaming_mode == true)
+	{
+		float theta_z = m_rotate_z / 180.0*M_PI;
+		float theta_x = (-m_rotate_x - 90) / 180.0*M_PI;
+		if (nChar == 'W')
+		{
+			m_move_x -= sin(theta_z)*cos(theta_x)*m_roaming_speed;
+			m_move_y -= cos(theta_z)*cos(theta_x)*m_roaming_speed;
+			m_move_z -= sin(theta_x)*m_roaming_speed;
+		}
+		if (nChar == 'S')
+		{
+			m_move_x += sin(theta_z)*cos(theta_x)*m_roaming_speed;
+			m_move_y += cos(theta_z)*cos(theta_x)*m_roaming_speed;
+			m_move_z += sin(theta_x)*m_roaming_speed;
+		}
+		if (nChar == 'A')
+		{
+			m_move_x += cos(theta_z)*m_roaming_speed;
+			m_move_y -= sin(theta_z)*m_roaming_speed;
+		}
+		if (nChar == 'D')
+		{
+			m_move_x -= cos(theta_z)*m_roaming_speed;
+			m_move_y += sin(theta_z)*m_roaming_speed;
+		}
+		if (nChar == ' ')
+		{
+			m_move_z -= m_roaming_speed;
+		}
+		if (nChar == 'C')
+		{
+			m_move_z += m_roaming_speed;
+		}
+		if (nChar == VK_ESCAPE)
+		{
+			m_projection_mode = PERSPECTIVE;
+			m_roaming_mode = false;
+			OnSize(0, m_cx, m_cy);
+		}
+	}
+	Invalidate(FALSE);
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+void CSceneEditorView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+
+	CView::OnKeyUp(nChar, nRepCnt, nFlags);
+}
+
+
+void CSceneEditorView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == 1)
+	{
+		//Invalidate(FALSE);
+	}
+	CView::OnTimer(nIDEvent);
 }

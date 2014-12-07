@@ -249,4 +249,5 @@ void CMainFrame::draw_property(CString name, DRAW_TYPE type)
 void CMainFrame::remove_all_prop_list()
 {
 	m_wndProperties.m_wndPropList.RemoveAll();
+	m_wndProperties.m_wndPropList.Invalidate(FALSE);
 }

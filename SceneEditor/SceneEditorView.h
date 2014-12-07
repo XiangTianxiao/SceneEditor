@@ -96,6 +96,10 @@ public:
 	int m_cx, m_cy;//也就是窗口大小
 
 	PROJECTION m_projection_mode;
+	bool m_roaming_mode;
+	float m_roaming_speed;
+
+	bool m_grid;
 
 protected: // 仅从序列化创建
 	CSceneEditorView();
@@ -162,6 +166,13 @@ public:
 	afx_msg void OnProjectionPerspective();
 	afx_msg void OnUpdateProjectionParallel(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateProjectionPerspective(CCmdUI *pCmdUI);
+	afx_msg void OnRoamingMode();
+	afx_msg void OnUpdateRoamingMode(CCmdUI *pCmdUI);
+	afx_msg void OnSwitchGrid();
+	afx_msg void OnUpdateSwitchGrid(CCmdUI *pCmdUI);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 #ifndef _DEBUG  // SceneEditorView.cpp 中的调试版本
