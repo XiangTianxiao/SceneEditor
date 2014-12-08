@@ -12,6 +12,8 @@
 
 #include <fstream>
 #include <string>
+
+#include "../Maths/Maths.h"
 using namespace std;
 
 class CObj
@@ -34,6 +36,7 @@ public:
 
 	virtual void draw(){};// = 0;
 	virtual void mark(){};// = 0;
+	virtual bool is_collision(float x, float y, float z){ return false; };
 	friend ostream& operator<<(ostream& out, CObj obj);
 	void load(istream& file);
 	

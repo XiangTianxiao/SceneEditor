@@ -52,6 +52,7 @@
 //#include <gl\GL.h>
 //#include <gl\GLU.h>
 //#include <gl\glut.h>
+#include "Maths\Maths.h"
 
 #define BITMAP_ID 0x4D42
 

@@ -62,9 +62,11 @@ void CPrism::DrawBottom(GLfloat h, GLfloat r)
 	vertex[1] = 0;
 	vertex[2] = h;
 	vertex[3] = 1.0;
+	glTexCoord2f(0.5f, 0.5f);
 	glVertex4fv(vertex);
 	for (int i = 0; i <= m_edge; i++)
 	{
+		glTexCoord2f(sin(delta_angle*i), cos(delta_angle*i));
 		vertex[0] = std::sin(delta_angle*i)*r;
 		vertex[1] = std::cos(delta_angle*i)*r;
 		glVertex4fv(vertex);
@@ -85,9 +87,13 @@ void CPrism::DrawSide()
 		float3 v4(sin(delta_angle*(i + 1))*m_baseRadius, cos(delta_angle*(i + 1))*m_baseRadius, 0);
 		float3 vt = (v2 - v1)*(v3 - v2);
 		glNormal3f(vt.x, vt.y, vt.z);
+		glTexCoord2f(1.0f, 0.0f);
 		glVertex3f(v1.x, v1.y, v1.z);
+		glTexCoord2f(1.0f, 1.0f);
 		glVertex3f(v2.x, v2.y, v2.z);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex3f(v3.x, v3.y, v3.z);
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex3f(v4.x, v4.y, v4.z);
 	}
 	glEnd();
@@ -190,3 +196,31 @@ ostream& operator<<(ostream& out, CPrism prism)
 	out << endl;
 	return out;
 }
+
+bool CPrism::is_collision(float x, float y, float z)
+{
+	float dx = x - m_x;
+	float dy = y - m_y;
+	float dz = z - m_z;
+
+	MATRIX4X4 m;
+	VECTOR4D v(dx, dy, dz, 1);
+	{
+		glPushMatrix();
+		glLoadIdentity();
+		glScalef(m_l, m_w, m_h);
+		glRotatef(m_angle_x, 1, 0, 0);
+		glRotatef(m_angle_y, 0, 1, 0);
+		glRotatef(m_angle_z, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, m);
+		glPopMatrix();
+	}
+	VECTOR4D result = m.GetInverse()*v;
+	if (result.z > m_height || result.z < 0)
+		return false;
+	float r = sqrt(result.x*result.x + result.y*result.y);
+	if (r >(m_baseRadius - result.z*(m_baseRadius - m_topRadius) / m_height))
+		return false;
+	return true;
+}
+

@@ -103,6 +103,8 @@ public:
 
 	bool m_animate_on;
 
+	bool is_collision();
+
 protected: // 仅从序列化创建
 	CSceneEditorView();
 	DECLARE_DYNCREATE(CSceneEditorView)

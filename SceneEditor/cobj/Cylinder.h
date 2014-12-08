@@ -25,6 +25,7 @@ public:
 
 	void draw();
 	void mark();
+	bool is_collision(float x, float y, float z);
 	friend ostream& operator<<(ostream& out, CCylinder cylinder);
 private:
 	void DrawCircleArea(float cx, float cy, float cz, float r, int num_segments);

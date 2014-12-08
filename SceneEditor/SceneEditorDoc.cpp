@@ -46,8 +46,8 @@ CSceneEditorDoc::CSceneEditorDoc()
 		m_obj_list.push_back(pObj);
 	}
 	*/
-	CDocObj* pobj = new CDocObj(_T("helicopter"), HELICOPTER);
-	m_obj_list.push_back(pobj);
+	//CDocObj* pobj = new CDocObj(_T("helicopter"), HELICOPTER);
+	//m_obj_list.push_back(pobj);
 	{
 		CLight* pLight = new CLight();
 		pLight->m_name = CString("light_0");

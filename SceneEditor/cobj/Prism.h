@@ -18,6 +18,7 @@ public:
 
 	void draw();
 	void mark();
+	bool is_collision(float x, float y, float z);
 	friend ostream& operator<<(ostream& out, CPrism prism);
 
 private:

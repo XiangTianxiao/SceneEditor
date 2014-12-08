@@ -142,3 +142,30 @@ ostream& operator<<(ostream& out, CCube cube)
 	return out;
 }
 
+bool CCube::is_collision(float x, float y, float z)
+{
+	float dx = x - m_x;
+	float dy = y - m_y;
+	float dz = z - m_z;
+
+	MATRIX4X4 m;
+	VECTOR4D v(dx, dy, dz, 1);
+	{
+		glPushMatrix();
+		glLoadIdentity();
+		glScalef(m_l, m_w, m_h);
+		glRotatef(m_angle_x, 1, 0, 0);
+		glRotatef(m_angle_y, 0, 1, 0);
+		glRotatef(m_angle_z, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, m);
+		glPopMatrix();
+	}
+	VECTOR4D result = m.GetInverse()*v;
+	if (abs(result.x) > 0.5)
+		return false;
+	if (abs(result.y) > 0.5)
+		return false;
+	if (abs(result.z) > 0.5)
+		return false;
+	return true;
+}

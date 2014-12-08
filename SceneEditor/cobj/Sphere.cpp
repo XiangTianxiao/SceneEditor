@@ -7,6 +7,7 @@ CSphere::CSphere()
 	m_slices = 30;
 	m_stacks = 30;
 	m_r = 1;
+	quadObj = NULL;
 }
 
 CSphere::CSphere(istream& file) :CSphere()
@@ -32,15 +33,23 @@ CSphere::CSphere(istream& file) :CSphere()
 
 CSphere::~CSphere()
 {
+	gluDeleteQuadric(quadObj);
 }
 
 void CSphere::draw()
 {
+	if (quadObj == NULL)
+	{
+		quadObj = gluNewQuadric();//创建一个二次曲面物体
+		gluQuadricTexture(quadObj, GL_TRUE);        //启用该二次曲面的纹理
+	}
+
 	SetMaterial();
 
 	glPushMatrix();
 	Transform();
-	glutSolidSphere(m_r, m_slices, m_stacks);
+	//glutSolidSphere(m_r, m_slices, m_stacks);
+	gluSphere(quadObj, m_r, m_slices, m_stacks);
 	glPopMatrix();
 }
 
@@ -111,3 +120,30 @@ ostream& operator<<(ostream& out, CSphere sphere)
 	out << endl;
 	return out;
 }
+
+
+bool CSphere::is_collision(float x, float y, float z)
+{
+	float dx = x - m_x;
+	float dy = y - m_y;
+	float dz = z - m_z;
+
+	MATRIX4X4 m;
+	VECTOR4D v(dx, dy, dz, 1);
+	{
+		glPushMatrix();
+		glLoadIdentity();
+		glScalef(m_l, m_w, m_h);
+		glRotatef(m_angle_x, 1, 0, 0);
+		glRotatef(m_angle_y, 0, 1, 0);
+		glRotatef(m_angle_z, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, m);
+		glPopMatrix();
+	}
+	VECTOR4D result = m.GetInverse()*v;
+	float r = sqrt(result.x*result.x + result.y*result.y + result.z*result.z);
+	if (r > m_r)
+		return false;
+	return true;
+}
+

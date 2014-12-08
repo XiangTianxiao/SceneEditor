@@ -22,6 +22,7 @@ public:
 	~helicopter();
 	void draw();
 	void mark();
+	bool is_collision(float x, float y, float z);
 	void rotate(int delta_angle);
 
 
@@ -29,5 +30,6 @@ public:
 	BYTE* m_bitmapData;
 	void texload(const char *filename, GLuint texture);
 	unsigned char *LoadBitmapFile(const char *filename, BITMAPINFOHEADER *bitmapInfoHeader);
+	
 };
 

@@ -432,7 +432,7 @@ void CDocObj::change_value(CMFCPropertyGridProperty* pProp)
 		m_obj->m_angle_y = GLfloat(t.fltVal);
 		return;
 	}
-	if (name == "XÖá½Ç¶È")
+	if (name == "ZÖá½Ç¶È")
 	{
 		m_obj->m_angle_z = GLfloat(t.fltVal);
 		return;

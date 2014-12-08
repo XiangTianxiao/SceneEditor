@@ -55,10 +55,10 @@ void CObj::SetMaterial()
 void CObj::Transform()
 {
 	glTranslatef(m_x, m_y, m_z);
+	glScalef(m_l, m_w, m_h);
 	glRotatef(m_angle_x, 1, 0, 0);
 	glRotatef(m_angle_y, 0, 1, 0);
 	glRotatef(m_angle_z, 0, 0, 1);
-	glScalef(m_l, m_w, m_h);
 }
 
 ostream& operator<<(ostream& out, CObj obj)

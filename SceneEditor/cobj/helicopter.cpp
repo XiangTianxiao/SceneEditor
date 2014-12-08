@@ -33,9 +33,9 @@ helicopter::helicopter()
 	body2.m_topRadius = 0.2;
 	body2.m_height = 0.5;
 
-	//sphere.m_r = 0.5;
+	sphere.m_angle_z = -90;
 	sphere.m_r = 0.45;
-	sphere.m_l = 1.5;
+	sphere.m_w = 1.5;
 	//Î²°Í
 	tail.m_l = 2.5;
 	tail.m_h = 0.05;
@@ -55,9 +55,8 @@ helicopter::helicopter()
 	tail2.m_z = 0.17;
 	tail2.m_x = -0.4;
 
-	glGenTextures(2, m_texture);
-	texload("texture/glass.bmp", m_texture[0]);
-	texload("texture/camouflage.bmp", m_texture[1]);
+	m_texture[0] = NULL;
+	m_texture[1] = NULL;
 
 }
 
@@ -68,10 +67,19 @@ helicopter::~helicopter()
 
 void helicopter::draw()
 {
+	if (m_texture[0] == NULL)
+	{
+		glGenTextures(2, m_texture);
+		texload("texture/heli2.bmp", m_texture[0]);
+		texload("texture/camouflage.bmp", m_texture[1]);
+	}
+
+	glEnable(GL_TEXTURE_2D);
 	SetMaterial();
 	glPushMatrix();
 	Transform();
 	{
+		glBindTexture(GL_TEXTURE_2D, m_texture[1]);
 		glPushMatrix();
 		glTranslatef(0, 0, 0.7);
 		m_rotor1.draw();
@@ -83,8 +91,8 @@ void helicopter::draw()
 	{
 		glPushMatrix();
 		glBindTexture(GL_TEXTURE_2D, m_texture[0]);
-		glEnable(GL_TEXTURE_2D);
 		sphere.draw();
+		glBindTexture(GL_TEXTURE_2D, m_texture[1]);
 		body.draw();
 		body2.draw();
 		glTranslatef(2.5, 0, 0);
@@ -92,9 +100,9 @@ void helicopter::draw()
 		glTranslatef(1.25, 0, 0);
 		prism.draw();
 		tail2.draw();
-		glDisable(GL_TEXTURE_2D);
 		glPopMatrix();
 	}
+	glDisable(GL_TEXTURE_2D);
 
 
 
@@ -183,4 +191,9 @@ unsigned char* helicopter::LoadBitmapFile(const char *filename, BITMAPINFOHEADER
 	// ¹Ø±ÕbitmapÍ¼ÏñÎÄ¼þ
 	fclose(filePtr);
 	return bitmapImage;
+}
+
+bool helicopter::is_collision(float x, float y, float z)
+{
+	return false;
 }

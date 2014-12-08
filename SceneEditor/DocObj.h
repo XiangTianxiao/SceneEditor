@@ -29,6 +29,10 @@ public:
 	void draw_property(CMFCPropertyGridCtrl* PropList);
 	void change_value(CMFCPropertyGridProperty* pProp);
 	void draw();
+	bool is_collision(float x, float y, float z)
+	{
+		return m_obj->is_collision(x, y, z);
+	}
 
 	void draw_property_obj(CMFCPropertyGridCtrl* PropList);
 	void draw_property_cube(CMFCPropertyGridCtrl* PropList);

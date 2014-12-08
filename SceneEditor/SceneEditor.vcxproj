@@ -117,6 +117,13 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightTree.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Maths\COLOR.h" />
+    <ClInclude Include="Maths\Maths.h" />
+    <ClInclude Include="Maths\MATRIX4X4.h" />
+    <ClInclude Include="Maths\PLANE.h" />
+    <ClInclude Include="Maths\VECTOR2D.h" />
+    <ClInclude Include="Maths\VECTOR3D.h" />
+    <ClInclude Include="Maths\VECTOR4D.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SceneEditor.h" />
@@ -143,6 +150,12 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightTree.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Maths\COLOR.cpp" />
+    <ClCompile Include="Maths\MATRIX4X4.cpp" />
+    <ClCompile Include="Maths\PLANE.cpp" />
+    <ClCompile Include="Maths\VECTOR2D.cpp" />
+    <ClCompile Include="Maths\VECTOR3D.cpp" />
+    <ClCompile Include="Maths\VECTOR4D.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="SceneEditor.cpp" />
     <ClCompile Include="SceneEditorDoc.cpp" />

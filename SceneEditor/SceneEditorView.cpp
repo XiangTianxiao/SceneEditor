@@ -201,7 +201,7 @@ CSceneEditorView::CSceneEditorView()
 
 	m_roaming_speed = 1;
 
-	m_animate_on = true;
+	m_animate_on = false;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -758,6 +758,8 @@ void CSceneEditorView::RenderScene()
 	for (auto i = v.begin(); i != v.end(); i++)
 	{
 		(*i)->draw();
+		if ((*i)->m_obj->is_collision(-m_move_x, -m_move_y, -m_move_z) == true)
+			AfxMessageBox(_T("发生碰撞"));
 	}
 	glEnable(GL_LIGHTING);
 
@@ -1367,6 +1369,22 @@ void CSceneEditorView::OnUpdateSwitchGrid(CCmdUI *pCmdUI)
 }
 
 
+bool CSceneEditorView::is_collision()
+{
+	CSceneEditorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return false;
+
+	auto list = pDoc->m_obj_list;
+	for (auto i = list.begin(); i != list.end(); i++)
+	{
+		if ((*i)->is_collision(-m_move_x, -m_move_y, -m_move_z) == true)
+			return true;
+	}
+	return false;
+}
+
 void CSceneEditorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
@@ -1380,30 +1398,60 @@ void CSceneEditorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			m_move_x -= sin(theta_z)*cos(theta_x)*m_roaming_speed;
 			m_move_y -= cos(theta_z)*cos(theta_x)*m_roaming_speed;
 			m_move_z -= sin(theta_x)*m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_x += sin(theta_z)*cos(theta_x)*m_roaming_speed;
+				m_move_y += cos(theta_z)*cos(theta_x)*m_roaming_speed;
+				m_move_z += sin(theta_x)*m_roaming_speed;
+			}
 		}
 		if (nChar == 'S')
 		{
 			m_move_x += sin(theta_z)*cos(theta_x)*m_roaming_speed;
 			m_move_y += cos(theta_z)*cos(theta_x)*m_roaming_speed;
 			m_move_z += sin(theta_x)*m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_x -= sin(theta_z)*cos(theta_x)*m_roaming_speed;
+				m_move_y -= cos(theta_z)*cos(theta_x)*m_roaming_speed;
+				m_move_z -= sin(theta_x)*m_roaming_speed;
+			}
 		}
 		if (nChar == 'A')
 		{
 			m_move_x += cos(theta_z)*m_roaming_speed;
 			m_move_y -= sin(theta_z)*m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_x -= cos(theta_z)*m_roaming_speed;
+				m_move_y += sin(theta_z)*m_roaming_speed;
+			}
 		}
 		if (nChar == 'D')
 		{
 			m_move_x -= cos(theta_z)*m_roaming_speed;
 			m_move_y += sin(theta_z)*m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_x += cos(theta_z)*m_roaming_speed;
+				m_move_y -= sin(theta_z)*m_roaming_speed;
+			}
 		}
 		if (nChar == ' ')
 		{
 			m_move_z -= m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_z += m_roaming_speed;
+			}
 		}
 		if (nChar == 'C')
 		{
 			m_move_z += m_roaming_speed;
+			if (is_collision() == true)
+			{
+				m_move_z -= m_roaming_speed;
+			}
 		}
 		if (nChar == VK_ESCAPE)
 		{
