@@ -1,0 +1,122 @@
+<cube>
+<obj>
+position 0 0 0
+size 10 10 0.01
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+</cube>
+
+<cylinder>
+<obj>
+position -3 -3 0
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 1 1 1 0
+shininess 30
+</obj>
+baseRadius 0.5
+topRadius 0
+height 1
+slices 30
+stacks 30
+</cylinder>
+
+<cube>
+<obj>
+position 0 0 1
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+</cube>
+
+<cube>
+<obj>
+position 1 0 1
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+</cube>
+
+<cube>
+<obj>
+position 0 1 1
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+</cube>
+
+<cube>
+<obj>
+position 0 0 2
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+</cube>
+
+<prism>
+<obj>
+position -3 0 1
+size 1 1 1
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0 0 0 0
+shininess 0
+</obj>
+edge 6
+baseRadius 1
+topRadius 0.5
+height 1
+</prism>
+
+<sphere>
+<obj>
+position 0 0 3
+size 0.5 0.5 0.5
+angle 0 0 0
+ambient 0.2 0.2 0.2 1
+diffuse 0.8 0.8 0.8 1
+specular 0.501961 0.501961 0.501961 0
+shininess 100
+</obj>
+r 1
+slices 30
+stacks 30
+</sphere>
+
+<light>
+name light_0
+on 1
+position -2 0 5 1
+color 1 1 1 1
+</light>
+
+<light>
+name light_1
+on 0
+position 0 0 -5 1
+color 1 1 1 1
+</light>
+

@@ -11,6 +11,8 @@
 
 #include "SceneEditorDoc.h"
 
+//#define DRAW_HELICOPTER
+
 #include <propkey.h>
 
 #include "cobj\helicopter.h"
@@ -46,8 +48,9 @@ CSceneEditorDoc::CSceneEditorDoc()
 		m_obj_list.push_back(pObj);
 	}
 	*/
-	//CDocObj* pobj = new CDocObj(_T("helicopter"), HELICOPTER);
-	//m_obj_list.push_back(pobj);
+#ifdef DRAW_HELICOPTER
+	CDocObj* pobj = new CDocObj(_T("helicopter"), HELICOPTER);
+	m_obj_list.push_back(pobj);
 	{
 		CLight* pLight = new CLight();
 		pLight->m_name = CString("light_0");
@@ -64,7 +67,7 @@ CSceneEditorDoc::CSceneEditorDoc()
 		pLight->m_light_pos[2] = -5;
 		m_light_list.push_back(pLight);
 	}
-	 
+#endif
 }
 
 CSceneEditorDoc::~CSceneEditorDoc()
@@ -80,10 +83,11 @@ BOOL CSceneEditorDoc::OnNewDocument()
 	// (SDI 文档将重用该文档)
 
 	CMainFrame *pFrame = (CMainFrame*)(AfxGetApp()->m_pMainWnd);
-	/*
+#ifndef DRAW_HELICOPTER
 	m_light_list.clear();
 	m_obj_list.clear();
-	*/
+#endif
+
 	if (pFrame == NULL)
 		return TRUE;
 	pFrame->remove_all_prop_list();

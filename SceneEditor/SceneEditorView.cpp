@@ -201,7 +201,7 @@ CSceneEditorView::CSceneEditorView()
 
 	m_roaming_speed = 1;
 
-	m_animate_on = false;
+	m_animate_on = true;
 }
 
 CSceneEditorView::~CSceneEditorView()
@@ -245,7 +245,7 @@ void CSceneEditorView::OnDraw(CDC* pDC)
 	if (m_projection_mode == PERSPECTIVE)
 		glTranslatef(m_move_x, m_move_y, m_move_z);
 	if (m_projection_mode == PARALLEL)
-		glTranslatef(m_move_x, m_move_y, 0);
+		glTranslatef(m_move_x, m_move_y, m_move_z);
 
 	//透视投影
 	//////////////////////////////////////////////
@@ -532,6 +532,8 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	
 	if (0 >= cx || 0 >= cy)
 		return;
+	m_cx = cx;
+	m_cy = cy;
 
 	glViewport(0, 0, cx, cy);
 
@@ -542,8 +544,7 @@ void CSceneEditorView::OnSize(UINT nType, int cx, int cy)
 	{
 		/////////////////////////////////////////////////////////////////
 		//平行投影
-		m_cx = cx;
-		m_cy = cy;
+
 		glOrtho(-cx / m_zoom, cx / m_zoom, -cy / m_zoom, cy / m_zoom, -100, 100);
 		/////////////////////////////////////////////////////////////////
 	}
